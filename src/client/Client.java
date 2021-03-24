@@ -7,10 +7,10 @@ public class Client {
 	int port;
 	
 	public static void main(String[] args) throws ExceptionHandling {
-		System.out.print("Hello from client");
+		System.out.print("Hello from client\n");
 		
 		if (args.length != 2) {
-			throw new ExceptionHandling("Not enough input");
+			throw new ExceptionHandling("Input error", "Not enough input");
 		}
 	}
 }
