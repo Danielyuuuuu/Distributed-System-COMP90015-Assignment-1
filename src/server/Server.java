@@ -29,9 +29,14 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+
 import java.io.FileReader;
+import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Server {
 
@@ -44,6 +49,8 @@ public class Server {
 	private Thread listeningThread = null;
 	
 	private JLabel serverStatus = null;
+	
+	private Hashtable<String, ArrayList<String>> dict = new Hashtable<>();
 
 	/**
 	 * Launch the application.
@@ -97,8 +104,19 @@ public class Server {
           
         // typecasting obj to JSONObject
         JSONObject jo = (JSONObject) obj;
-
-        System.out.println(jo);
+        
+        for(Object word : jo.keySet()) {
+        	System.out.println(word + ": " + jo.get(word));
+//        	Object[] translations = (Object [])jo.get(word);
+        	ArrayList<String> translationArrayList = new ArrayList<>();
+        	JSONArray array = (JSONArray) jo.get(word);
+//        	array.add(jo.get(word));
+        	System.out.println(array.size());
+        	for(int i = 0; i < array.size(); i++) {
+        		translationArrayList.add((String) array.get(i));
+        	}
+        	dict.put(word.toString(), translationArrayList);
+        }
 	}
 	
 
