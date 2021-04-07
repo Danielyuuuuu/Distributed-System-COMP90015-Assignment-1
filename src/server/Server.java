@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -23,7 +24,14 @@ import client.ExceptionHandling;
 import javax.swing.JButton;
 import javax.swing.JTextArea;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
+import java.io.FileReader;
+import java.util.Iterator;
+import java.util.Map;
 
 public class Server {
 
@@ -59,8 +67,9 @@ public class Server {
 	 * Create the application.
 	 * @throws IOException 
 	 * @throws ExceptionHandling 
+	 * @throws ParseException 
 	 */
-	public Server(String[] args) throws IOException, ExceptionHandling {
+	public Server(String[] args) throws IOException, ExceptionHandling, ParseException {
 		if (args.length != 1) {
 			throw new ExceptionHandling("No server port or dictionary file specified", "format <port> <dictionary-file>");
 		}
@@ -78,8 +87,20 @@ public class Server {
 					}
 				});
 		listeningThread.start();
-		
+		ReadDictFile("./dict-file.json");
 	}
+	
+	
+	private void ReadDictFile(String filePath) throws FileNotFoundException, IOException, ParseException {        
+        // parsing file "JSONExample.json"
+        Object obj = new JSONParser().parse(new FileReader(filePath));
+          
+        // typecasting obj to JSONObject
+        JSONObject jo = (JSONObject) obj;
+
+        System.out.println(jo);
+	}
+	
 
 	/**
 	 * Initialize the contents of the frame.
