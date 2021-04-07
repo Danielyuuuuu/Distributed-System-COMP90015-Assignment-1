@@ -1,4 +1,4 @@
-package client;
+package server;
 
 @SuppressWarnings("serial")
 public class ExceptionHandling extends Exception{

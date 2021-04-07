@@ -49,7 +49,7 @@ public class Client {
 		System.out.print("Hello from client\n");
 		
 		if (args.length != 2) {
-			throw new ExceptionHandling("Input error", "Not enough input");
+			throw new ExceptionHandling("No server address or port number specified", "format <server-address> <server-port>");
 		}
 		
 		EventQueue.invokeLater(new Runnable() {
