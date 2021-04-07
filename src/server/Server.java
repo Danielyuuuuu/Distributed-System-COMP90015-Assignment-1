@@ -30,6 +30,8 @@ public class Server {
 	private int port;
 	private ServerSocket listeningSocket = null;
 	private Socket clientSocket = null;
+	
+	private Thread listeningThread = null;
 
 	/**
 	 * Launch the application.
@@ -89,12 +91,17 @@ public class Server {
 		lblNewLabel_3.setBounds(228, 54, 183, 16);
 		frame.getContentPane().add(lblNewLabel_3);
 		
+		JButton btnNewButton_1 = new JButton("Disconnect");
+		btnNewButton_1.setBounds(164, 109, 117, 29);
+		frame.getContentPane().add(btnNewButton_1);
+		btnNewButton_1.setVisible(false);
+		
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				port = Integer.parseInt(textField.getText());
 				
-				// Start a new thread for a connection
-				Thread t = new Thread(() -> {
+				// Start a new thread to listen on a specific port
+				listeningThread = new Thread(() -> {
 					try {
 						SetPortToListen();
 					} catch (IOException e1) {
@@ -102,12 +109,36 @@ public class Server {
 						e1.printStackTrace();
 					}
 				});
-				t.start();
-				lblNewLabel_1.setEnabled(false);
-				btnNewButton.setEnabled(false);
-				textField.setEnabled(false);
+				listeningThread.start();
+				lblNewLabel_1.setVisible(false);
+				btnNewButton.setVisible(false);
+				textField.setVisible(false);
+				btnNewButton_1.setVisible(true);
 				lblNewLabel_3.setText("Listening on port " + port);
-
+					
+			}
+		});
+		
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				lblNewLabel_1.setVisible(true);
+				btnNewButton.setVisible(true);
+				textField.setVisible(true);
+				btnNewButton_1.setVisible(false);
+				listeningThread.interrupt();
+				listeningThread = null;
+				try {
+					listeningSocket.close();
+					listeningSocket = null;
+					if (clientSocket != null) {
+						clientSocket.close();
+						clientSocket = null;
+					}
+					lblNewLabel_3.setText("Inactive");
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
 	}
@@ -118,7 +149,7 @@ public class Server {
 		listeningSocket = new ServerSocket(port);
 		
 		//Listen for incoming connections for ever 
-		while (true) 
+		while (listeningSocket != null && true) 
 		{
 			System.out.println("Server listening on port " + port +  " for a connection");
 			//Accept an incoming client connection request 

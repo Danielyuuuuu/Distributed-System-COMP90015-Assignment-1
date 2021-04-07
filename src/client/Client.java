@@ -38,6 +38,9 @@ public class Client {
 	BufferedReader in;
 	BufferedWriter out;
 
+	
+	private JTextArea textArea = null;
+	
 	/**
 	 * Launch the application.
 	 * @throws ExceptionHandling 
@@ -98,6 +101,13 @@ public class Client {
 		out.write(word + "\n");
 		out.flush();
 		System.out.println("Message sent: " + word);
+		
+		// This method blocks until there  is something to read from the
+		String received = in.readLine(); 
+		
+		// input stream
+		System.out.println("Message received: " + received);
+		textArea.setText(received);
 	}
 
 	/**
@@ -123,14 +133,13 @@ public class Client {
 		btnNewButton.setBounds(261, 66, 117, 29);
 		frame.getContentPane().add(btnNewButton);
 		
-		JTextArea textArea = new JTextArea();
+		textArea = new JTextArea();
 		textArea.setBounds(156, 136, 147, 79);
 		frame.getContentPane().add(textArea);
 		
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String fetchText = textField.getText();
-				textArea.append(fetchText + "\n");
 				textField.setText("");
 				try {
 					sendWordToServer(fetchText);
