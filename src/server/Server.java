@@ -237,7 +237,7 @@ public class Server {
     	
         private final Socket clientSocket;
         private final int clientID;
-        private PrintWriter out = null;
+        private BufferedWriter out = null;
         private BufferedReader in = null;
         
         // Constructor
@@ -253,15 +253,19 @@ public class Server {
 //            BufferedReader in = null;
             try {
                     
-                  // get the outputstream of client
-                out = new PrintWriter(
-                    clientSocket.getOutputStream(), true);
+//                  // get the outputstream of client
+//                out = new PrintWriter(
+//                    clientSocket.getOutputStream(), true);
+//  
+//                  // get the inputstream of client
+//                in = new BufferedReader(
+//                    new InputStreamReader(
+//                        clientSocket.getInputStream()));
   
-                  // get the inputstream of client
-                in = new BufferedReader(
-                    new InputStreamReader(
-                        clientSocket.getInputStream()));
-  
+                //Get the input/output streams for reading/writing data from/to the socket
+				in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), "UTF-8"));
+				out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream(), "UTF-8"));
+                
                 String line;
                 while ((line = in.readLine()) != null) {
   
@@ -292,7 +296,7 @@ public class Server {
             }
         }
         
-        private void GetWordMeaning(String word) {
+        private void GetWordMeaning(String word) throws IOException {
         	word = word.strip();
         	if (dict.containsKey(word)) {
         		out.write("Server Ack: " + dict.get(word) + "\n");
