@@ -98,6 +98,7 @@ public class Client {
 	 */
 	private void sendWordToServer(String word) throws IOException {		
 		// Send the input string to the server by writing to the socket output stream
+		out.write("search-word-meaning\n");
 		out.write(word + "\n");
 		out.flush();
 		System.out.println("Message sent: " + word);

@@ -268,13 +268,15 @@ public class Server {
                 
                 String line;
                 while ((line = in.readLine()) != null) {
-  
-                    // writing the received message from
-                    // client
-                    System.out.println(" Sent from the client " + clientID + ": " + line);
-//					out.write("Server Ack " + dict.get(line) + "\n");
-//					out.flush();
-                    GetWordMeaning(line);
+                	if ((line.strip()).equals("search-word-meaning")) {
+                		line = in.readLine();
+                        // writing the received message from
+                        // client
+                        System.out.println(" Sent from the client " + clientID + ": " + line);
+//    					out.write("Server Ack " + dict.get(line) + "\n");
+//    					out.flush();
+                        GetWordMeaning(line);
+                	}
                 }
             }
             catch (IOException e) {
@@ -300,7 +302,7 @@ public class Server {
         	word = word.strip().toLowerCase();
         	if (dict.containsKey(word)) {
         		String response = "";
-        		response = response + "Meaning of " + word + " is: \n";
+        		response = response + "Meaning of \"" + word + "\" is: \n";
 //        		out.write("Meaning of " + word + " is: \n");
         		int count = 1;
         		for (String meaning : dict.get(word)) {
@@ -316,7 +318,7 @@ public class Server {
         		out.flush();
         	}
         	else {
-        		out.write("Server Ack: " + "Word does not exist" + "\n" + "end\n");
+        		out.write("Word \"" + word + "\" does not exist" + "\n" + "end\n");
         		out.flush();
         	}
         	
