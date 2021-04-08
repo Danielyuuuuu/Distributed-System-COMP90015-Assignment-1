@@ -117,6 +117,49 @@ public class Server {
         	}
         	dict.put(word.toString(), translationArrayList);
         }
+        
+        System.out.println("Print dict");
+        for (String word : dict.keySet()) {
+        	System.out.println(word + ": " + dict.get(word));
+        }
+	}
+	
+	
+	private String AddNewWord(String word, ArrayList<String> meanings) {
+		word = word.strip();
+		if (dict.containsKey(word)) {
+			return "The word already exist";
+		}
+		else if (word.isEmpty()) {
+			return "Did not specify the word";
+		}
+		else if (meanings.size() == 0) {
+			return "Did not specify the meaning of the word";
+		}
+		dict.put(word, meanings);
+		return "Success";
+	}
+	
+	
+	private String RemoveExistingWord(String word) {
+		word = word.strip();
+		if (dict.containsKey(word)) {
+			dict.remove(word);
+			return "Success";
+		}
+		return "Word does not exist";
+	}
+	
+	private String UpdateWord(String word ,ArrayList<String> meanings) {
+		word = word.strip();
+		if (!dict.containsKey(word)) {
+			return "Word not found";
+		}
+		else if (meanings.size() == 0) {
+			return "Did not specify the meaning of the word";
+		}
+		dict.replace(word, meanings);
+		return "Success";
 	}
 	
 
