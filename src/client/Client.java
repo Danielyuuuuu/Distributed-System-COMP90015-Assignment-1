@@ -135,17 +135,20 @@ public class Client {
 		frame.getContentPane().add(lblNewLabel);
 		
 		textField = new JTextField();
-		textField.setBounds(92, 66, 130, 26);
+		textField.setFont(new Font("Lucida Grande", Font.PLAIN, 16));
+		textField.setBounds(27, 56, 254, 36);
 		frame.getContentPane().add(textField);
 		textField.setColumns(10);
 		
 		JButton btnNewButton = new JButton("Submit");
-		btnNewButton.setBounds(261, 66, 117, 29);
+		btnNewButton.setBounds(309, 59, 117, 33);
 		frame.getContentPane().add(btnNewButton);
 		
 		textArea = new JTextArea();
-		textArea.setBounds(148, 132, 156, 118);
+		textArea.setBounds(27, 132, 399, 118);
 		frame.getContentPane().add(textArea);
+		textArea.setLineWrap(true);
+		textArea.setWrapStyleWord(true);
 		
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
