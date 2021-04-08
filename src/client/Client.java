@@ -102,22 +102,12 @@ public class Client {
 		out.flush();
 		System.out.println("Message sent: " + word);
 		
-		textArea.setText("");
-		
 		// This method blocks until there  is something to read from the
-		String received = in.readLine();
-		while ((received = in.readLine()) != null) {
-			if((received.strip()).equals("end")) {
-				System.out.println("Before break");
-				break;
-			}
-			textArea.append(received + "\n");
-			System.out.println(received);
-		}
+		String received = in.readLine(); 
 		
-//		// input stream
-//		System.out.println("Message received: " + received);
-//		textArea.setText(received);
+		// input stream
+		System.out.println("Message received: " + received);
+		textArea.setText(received);
 	}
 
 	/**

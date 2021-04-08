@@ -299,24 +299,11 @@ public class Server {
         private void GetWordMeaning(String word) throws IOException {
         	word = word.strip().toLowerCase();
         	if (dict.containsKey(word)) {
-        		String response = "";
-        		response = response + "Meaning of " + word + " is: \n";
-//        		out.write("Meaning of " + word + " is: \n");
-        		int count = 1;
-        		for (String meaning : dict.get(word)) {
-        			response = response + count + ". " + meaning + ".\n";
-//        			out.write(count + ". " + meaning + ".\n");
-        			count++;
-        		}
-        		System.out.println("Before write end");
-        		response = response + "end" + "\n";
-        		out.write(response);
-//        		out.write("end\n");
-//        		out.write("Server Ack: " + dict.get(word) + "\n");
+        		out.write("Server Ack: " + dict.get(word) + "\n");
         		out.flush();
         	}
         	else {
-        		out.write("Server Ack: " + "Word does not exist" + "\n" + "end\n");
+        		out.write("Server Ack: " + "Word does not exist" + "\n");
         		out.flush();
         	}
         	
