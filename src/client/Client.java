@@ -134,7 +134,7 @@ public class Client {
 		frame.getContentPane().add(btnNewButton);
 		
 		textArea = new JTextArea();
-		textArea.setBounds(156, 136, 147, 79);
+		textArea.setBounds(148, 132, 156, 118);
 		frame.getContentPane().add(textArea);
 		
 		btnNewButton.addActionListener(new ActionListener() {

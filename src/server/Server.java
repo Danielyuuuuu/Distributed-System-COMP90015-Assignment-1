@@ -48,7 +48,7 @@ public class Server {
 	
 	private static JLabel serverStatus = null;
 	
-	private Hashtable<String, ArrayList<String>> dict = new Hashtable<>();
+	private static Hashtable<String, ArrayList<String>> dict = new Hashtable<>();
 	
 	private static int counter = 0;
 	
@@ -237,7 +237,9 @@ public class Server {
     	
         private final Socket clientSocket;
         private final int clientID;
-  
+        private PrintWriter out = null;
+        private BufferedReader in = null;
+        
         // Constructor
         public HandleClientConnection(Socket socket, int clientID)
         {
@@ -247,8 +249,8 @@ public class Server {
   
         public void run()
         {
-            PrintWriter out = null;
-            BufferedReader in = null;
+//            PrintWriter out = null;
+//            BufferedReader in = null;
             try {
                     
                   // get the outputstream of client
@@ -266,8 +268,9 @@ public class Server {
                     // writing the received message from
                     // client
                     System.out.println(" Sent from the client " + clientID + ": " + line);
-					out.write("Server Ack " + line + "\n");
-					out.flush();
+//					out.write("Server Ack " + dict.get(line) + "\n");
+//					out.flush();
+                    GetWordMeaning(line);
                 }
             }
             catch (IOException e) {
@@ -287,6 +290,19 @@ public class Server {
                     e.printStackTrace();
                 }
             }
+        }
+        
+        private void GetWordMeaning(String word) {
+        	word = word.strip();
+        	if (dict.containsKey(word)) {
+        		out.write("Server Ack: " + dict.get(word) + "\n");
+        		out.flush();
+        	}
+        	else {
+        		out.write("Server Ack: " + "Word does not exist" + "\n");
+        		out.flush();
+        	}
+        	
         }
     }
 
