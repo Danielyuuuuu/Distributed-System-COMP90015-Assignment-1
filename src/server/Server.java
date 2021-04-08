@@ -13,6 +13,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
@@ -20,6 +21,7 @@ import java.net.SocketException;
 import javax.swing.JTextField;
 
 import client.ExceptionHandling;
+//import server.MultiThreadServer.ClientHandler;
 
 import javax.swing.JButton;
 import javax.swing.JTextArea;
@@ -51,7 +53,9 @@ public class Server {
 	private JLabel serverStatus = null;
 	
 	private Hashtable<String, ArrayList<String>> dict = new Hashtable<>();
-
+	
+	private int counter = 0;
+	
 	/**
 	 * Launch the application.
 	 * @throws ExceptionHandling 
@@ -244,45 +248,124 @@ public class Server {
 		//Create a server socket listening on port
 		listeningSocket = new ServerSocket(port);
 		serverStatus.setText("Listening on port: " + port);
+		System.out.println("Server listening on port " + port +  " for a connection");
 		
-		//Listen for incoming connections for ever 
-		while (listeningSocket != null && true) 
-		{
-			System.out.println("Server listening on port " + port +  " for a connection");
-			//Accept an incoming client connection request 
-			clientSocket = listeningSocket.accept(); //This method will block until a connection request is received
-			System.out.println("Client conection accepted:");
-			System.out.println("Remote Hostname: " + clientSocket.getInetAddress().getHostName());
-			System.out.println("Local Port: " + clientSocket.getLocalPort());
-			
-			//Get the input/output streams for reading/writing data from/to the socket
-			BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), "UTF-8"));
-			BufferedWriter out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream(), "UTF-8"));
+        // running infinite loop for getting
+        // client request
+        while (true) {
 
-			
-			//Read the message from the client and reply
-			//Notice that no other connection can be accepted and processed until the last line of 
-			//code of this loop is executed, incoming connections have to wait until the current
-			//one is processed unless...we use threads!
-			String clientMsg = null;
-			try 
-			{
-				while((clientMsg = in.readLine()) != null) 
-				{
-					System.out.println("Message from client: " + clientMsg);
-					out.write("Server Ack " + clientMsg + "\n");
-					out.flush();
-					System.out.println("Response sent");
-				}
-			}
-			
-			catch(SocketException e)
-			{
-				System.out.println("closed...");
-			}
-			
-			clientSocket.close();
-		}
+            // socket object to receive incoming client
+            // requests
+            Socket client = listeningSocket.accept();
+
+            // Displaying that new client is connected
+            // to server
+            System.out.println("New client connected");
+
+
+            // This thread will handle the client
+            // separately
+            new Thread(new HandleClientConnection(client)).start();
+        }
+		
+		
+//		//Listen for incoming connections for ever 
+//		while (listeningSocket != null && true) 
+//		{
+//			System.out.println("Server listening on port " + port +  " for a connection");
+//			//Accept an incoming client connection request 
+//			clientSocket = listeningSocket.accept(); //This method will block until a connection request is received
+//			System.out.println("Client conection accepted:");
+//			System.out.println("Remote Hostname: " + clientSocket.getInetAddress().getHostName());
+//			System.out.println("Local Port: " + clientSocket.getLocalPort());
+//			
+//			//Get the input/output streams for reading/writing data from/to the socket
+//			BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), "UTF-8"));
+//			BufferedWriter out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream(), "UTF-8"));
+//
+//			
+//			//Read the message from the client and reply
+//			//Notice that no other connection can be accepted and processed until the last line of 
+//			//code of this loop is executed, incoming connections have to wait until the current
+//			//one is processed unless...we use threads!
+//			String clientMsg = null;
+//			try 
+//			{
+//				while((clientMsg = in.readLine()) != null) 
+//				{
+//					System.out.println("Message from client: " + clientMsg);
+//					out.write("Server Ack " + clientMsg + "\n");
+//					out.flush();
+//					System.out.println("Response sent");
+//				}
+//			}
+//			
+//			catch(SocketException e)
+//			{
+//				System.out.println("closed...");
+//			}
+//			
+//			clientSocket.close();
+//		}
 	}
+	
+	
+	// To handle client connection 
+    private static class HandleClientConnection implements Runnable {
+    	
+        private final Socket clientSocket;
+  
+        // Constructor
+        public HandleClientConnection(Socket socket)
+        {
+            this.clientSocket = socket;
+        }
+  
+        public void run()
+        {
+            PrintWriter out = null;
+            BufferedReader in = null;
+            try {
+                    
+                  // get the outputstream of client
+                out = new PrintWriter(
+                    clientSocket.getOutputStream(), true);
+  
+                  // get the inputstream of client
+                in = new BufferedReader(
+                    new InputStreamReader(
+                        clientSocket.getInputStream()));
+  
+                String line;
+                while ((line = in.readLine()) != null) {
+  
+                    // writing the received message from
+                    // client
+                    System.out.printf(
+                        " Sent from the client: %s\n",
+                        line);
+					out.write("Server Ack " + line + "\n");
+					out.flush();
+                }
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+            finally {
+                try {
+                    if (out != null) {
+                        out.close();
+                    }
+                    if (in != null) {
+                        in.close();
+                        clientSocket.close();
+                    }
+                }
+                catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 
 }
