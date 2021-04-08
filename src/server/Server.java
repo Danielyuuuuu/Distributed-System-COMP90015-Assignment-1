@@ -31,6 +31,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+
 import java.io.FileReader;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -38,7 +39,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
 import java.util.Arrays;
-
 
 public class Server {
 
@@ -105,7 +105,7 @@ public class Server {
         	for(int i = 0; i < array.size(); i++) {
         		translationArrayList.add((String) array.get(i));
         	}
-        	dict.put(word.toString().toLowerCase(), translationArrayList);
+        	dict.put(word.toString(), translationArrayList);
         }
         
 
@@ -297,7 +297,7 @@ public class Server {
         }
         
         private void GetWordMeaning(String word) throws IOException {
-        	word = word.strip().toLowerCase();
+        	word = word.strip();
         	if (dict.containsKey(word)) {
         		String response = "";
         		response = response + "Meaning of " + word + " is: \n";
