@@ -105,7 +105,7 @@ public class Client {
 		textArea.setText("");
 		
 		// This method blocks until there  is something to read from the
-		String received = in.readLine();
+		String received;
 		while ((received = in.readLine()) != null) {
 			if((received.strip()).equals("end")) {
 				System.out.println("Before break");
