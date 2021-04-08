@@ -257,15 +257,17 @@ public class Server {
             // socket object to receive incoming client
             // requests
             Socket client = listeningSocket.accept();
-
+            
+            counter++;
             // Displaying that new client is connected
+            
             // to server
-            System.out.println("New client connected");
+            System.out.println("New client connected: " + counter);
 
 
             // This thread will handle the client
             // separately
-            new Thread(new HandleClientConnection(client)).start();
+            new Thread(new HandleClientConnection(client, counter)).start();
         }
 		
 		
@@ -314,11 +316,13 @@ public class Server {
     private static class HandleClientConnection implements Runnable {
     	
         private final Socket clientSocket;
+        private final int clientID;
   
         // Constructor
-        public HandleClientConnection(Socket socket)
+        public HandleClientConnection(Socket socket, int clientID)
         {
             this.clientSocket = socket;
+            this.clientID = clientID;
         }
   
         public void run()
@@ -341,9 +345,7 @@ public class Server {
   
                     // writing the received message from
                     // client
-                    System.out.printf(
-                        " Sent from the client: %s\n",
-                        line);
+                    System.out.println(" Sent from the client " + clientID + ": " + line);
 					out.write("Server Ack " + line + "\n");
 					out.flush();
                 }
