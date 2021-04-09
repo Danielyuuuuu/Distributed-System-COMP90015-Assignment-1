@@ -298,7 +298,8 @@ public class Server {
             }
         }
         
-        private void GetWordMeaning(String word) throws IOException {
+        @SuppressWarnings("unchecked")
+		private void GetWordMeaning(String word) throws IOException {
         	word = word.strip().toLowerCase();
         	if (dict.containsKey(word)) {
         		String response = "";
@@ -311,14 +312,23 @@ public class Server {
         			count++;
         		}
         		System.out.println("Before write end");
-        		response = response + "end" + "\n";
-        		out.write(response);
-//        		out.write("end\n");
-//        		out.write("Server Ack: " + dict.get(word) + "\n");
+//        		response = response + "end" + "\n";
+//        		out.write(response);
+//        		out.flush();
+        		
+        		JSONObject responseJson = new JSONObject();
+        		responseJson.put("respond", response);
+        		out.write(responseJson.toString() + "\n");
         		out.flush();
         	}
         	else {
-        		out.write("Word \"" + word + "\" does not exist" + "\n" + "end\n");
+//        		out.write("Word \"" + word + "\" does not exist" + "\n" + "end\n");
+//        		out.flush();
+        		
+        		JSONObject responseJson = new JSONObject();
+        		String respondText = "Word \"" + word + "\" does not exist" + "\n";
+        		responseJson.put("respond", respondText);
+        		out.write(responseJson.toString() + "\n");
         		out.flush();
         	}
         	

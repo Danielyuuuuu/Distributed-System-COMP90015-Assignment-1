@@ -9,6 +9,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JTextField;
+
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 import javax.swing.JButton;
 import javax.swing.JTextArea;
 
@@ -95,8 +100,9 @@ public class Client {
 	 * Send word to the dictionary server
 	 * @param word
 	 * @throws IOException
+	 * @throws ParseException 
 	 */
-	private void sendWordToServer(String word) throws IOException {		
+	private void sendWordToServer(String word) throws IOException, ParseException {		
 		// Send the input string to the server by writing to the socket output stream
 		out.write("search-word-meaning\n");
 		out.write(word + "\n");
@@ -105,20 +111,23 @@ public class Client {
 		
 		textArea.setText("");
 		
-		// This method blocks until there  is something to read from the
-		String received;
-		while ((received = in.readLine()) != null) {
-			if((received.strip()).equals("end")) {
-				System.out.println("Before break");
-				break;
-			}
-			textArea.append(received + "\n");
-			System.out.println(received);
-		}
+//		// This method blocks until there  is something to read from the
+//		String received;
+//		while ((received = in.readLine()) != null) {
+//			if((received.strip()).equals("end")) {
+//				System.out.println("Before break");
+//				break;
+//			}
+//			textArea.append(received + "\n");
+//			System.out.println(received);
+//		}
 		
-//		// input stream
-//		System.out.println("Message received: " + received);
-//		textArea.setText(received);
+		String received = in.readLine();
+		JSONParser parser = new JSONParser();
+		JSONObject jsonReceived = (JSONObject) parser.parse(received);
+		textArea.append(jsonReceived.get("respond") + "\n");
+		System.out.println(jsonReceived.get("respond"));
+		
 	}
 
 	/**
@@ -158,6 +167,9 @@ public class Client {
 				try {
 					sendWordToServer(fetchText);
 				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (ParseException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
