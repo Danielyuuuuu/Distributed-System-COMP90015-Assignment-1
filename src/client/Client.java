@@ -103,7 +103,7 @@ public class Client {
 	 * @throws ParseException 
 	 */
 	@SuppressWarnings("unchecked")
-	private void sendWordToServer(String word) throws IOException, ParseException {		
+	private void queryWordMeaning(String word) throws IOException, ParseException {		
 		// Send the input string to the server by writing to the socket output stream
 //		out.write("search-word-meaning\n");
 //		out.write(word + "\n");
@@ -139,6 +139,26 @@ public class Client {
 		System.out.println(jsonReceived.get("respond"));
 		
 	}
+	
+	
+	@SuppressWarnings("unchecked")
+	private void deleteWord(String word) throws IOException, ParseException {
+		JSONObject sendJson = new JSONObject();
+		sendJson.put("operation", "delete");
+		sendJson.put("word", word);
+		out.write(sendJson.toString() + "\n");
+		out.flush();
+		System.out.println("Message sent: " + word);
+		
+		
+		textArea.setText("");
+		
+		String received = in.readLine();
+		JSONParser parser = new JSONParser();
+		JSONObject jsonReceived = (JSONObject) parser.parse(received);
+		textArea.append(jsonReceived.get("respond") + "\n");
+		System.out.println(jsonReceived.get("respond"));
+	}
 
 	/**
 	 * Initialize the contents of the frame.
@@ -160,9 +180,9 @@ public class Client {
 		frame.getContentPane().add(textField);
 		textField.setColumns(10);
 		
-		JButton btnNewButton = new JButton("Submit");
-		btnNewButton.setBounds(309, 59, 117, 33);
-		frame.getContentPane().add(btnNewButton);
+		JButton submitButton = new JButton("Submit");
+		submitButton.setBounds(309, 59, 117, 33);
+		frame.getContentPane().add(submitButton);
 		
 		textArea = new JTextArea();
 		textArea.setBounds(27, 132, 399, 118);
@@ -170,16 +190,33 @@ public class Client {
 		textArea.setLineWrap(true);
 		textArea.setWrapStyleWord(true);
 		
-		btnNewButton.addActionListener(new ActionListener() {
+		JButton deleteButton = new JButton("Delete");
+		deleteButton.setBounds(309, 91, 117, 33);
+		frame.getContentPane().add(deleteButton);
+		
+		submitButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String fetchText = textField.getText();
 				textField.setText("");
 				try {
-					sendWordToServer(fetchText);
+					queryWordMeaning(fetchText);
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				} catch (ParseException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		
+		deleteButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String fetchText = textField.getText();
+				textField.setText("");
+				try {
+					deleteWord(fetchText);
+				} catch (IOException | ParseException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}

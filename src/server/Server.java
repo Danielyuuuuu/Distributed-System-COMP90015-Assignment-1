@@ -284,6 +284,9 @@ public class Server {
             		if (clientQueryJson.get("operation").equals("query")) {
             			GetWordMeaning(clientQueryJson.get("word").toString());
             		}
+            		else if(clientQueryJson.get("operation").equals("delete")) {
+            			deleteWord(clientQueryJson.get("word").toString());
+            		}
                 	
                 }
             }
@@ -344,6 +347,28 @@ public class Server {
         	}
         	
         }
+        
+        
+        @SuppressWarnings("unchecked")
+		private void deleteWord(String word) throws IOException {
+        	word = word.strip().toLowerCase();
+        	if (dict.containsKey(word)) {
+        		dict.remove(word);
+        		JSONObject responseJson = new JSONObject();
+        		String respondText = "Word \"" + word + "\" deleted successfully" + "\n";
+        		responseJson.put("respond", respondText);
+        		out.write(responseJson.toString() + "\n");
+        		out.flush();
+        	}
+        	else {
+        		JSONObject responseJson = new JSONObject();
+        		String respondText = "Word \"" + word + "\" does not exist" + "\n";
+        		responseJson.put("respond", respondText);
+        		out.write(responseJson.toString() + "\n");
+        		out.flush();
+        	}
+        }
+        
     }
 
 }
