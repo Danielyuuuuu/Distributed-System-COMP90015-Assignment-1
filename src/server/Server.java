@@ -266,22 +266,33 @@ public class Server {
 				in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), "UTF-8"));
 				out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream(), "UTF-8"));
                 
-                String line;
-                while ((line = in.readLine()) != null) {
-                	if ((line.strip()).equals("search-word-meaning")) {
-                		line = in.readLine();
-                        // writing the received message from
-                        // client
-                        System.out.println(" Sent from the client " + clientID + ": " + line);
-//    					out.write("Server Ack " + dict.get(line) + "\n");
-//    					out.flush();
-                        GetWordMeaning(line);
-                	}
+                String clientQuery;
+                while ((clientQuery = in.readLine()) != null) {
+//                	if ((line.strip()).equals("search-word-meaning")) {
+//                		line = in.readLine();
+//                        // writing the received message from
+//                        // client
+//                        System.out.println(" Sent from the client " + clientID + ": " + line);
+////    					out.write("Server Ack " + dict.get(line) + "\n");
+////    					out.flush();
+//                        
+//                        GetWordMeaning(line);
+//                	}
+                	
+            		JSONParser parser = new JSONParser();
+            		JSONObject clientQueryJson = (JSONObject) parser.parse(clientQuery);
+            		if (clientQueryJson.get("operation").equals("query")) {
+            			GetWordMeaning(clientQueryJson.get("word").toString());
+            		}
+                	
                 }
             }
             catch (IOException e) {
                 e.printStackTrace();
-            }
+            } catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
             finally {
                 try {
                     if (out != null) {

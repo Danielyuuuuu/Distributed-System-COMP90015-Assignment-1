@@ -102,12 +102,22 @@ public class Client {
 	 * @throws IOException
 	 * @throws ParseException 
 	 */
+	@SuppressWarnings("unchecked")
 	private void sendWordToServer(String word) throws IOException, ParseException {		
 		// Send the input string to the server by writing to the socket output stream
-		out.write("search-word-meaning\n");
-		out.write(word + "\n");
+//		out.write("search-word-meaning\n");
+//		out.write(word + "\n");
+//		out.flush();
+//		System.out.println("Message sent: " + word);
+		
+		
+		JSONObject sendJson = new JSONObject();
+		sendJson.put("operation", "query");
+		sendJson.put("word", word);
+		out.write(sendJson.toString() + "\n");
 		out.flush();
 		System.out.println("Message sent: " + word);
+		
 		
 		textArea.setText("");
 		
