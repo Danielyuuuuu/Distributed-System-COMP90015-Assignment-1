@@ -31,6 +31,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
+
 public class Client {
 
 	protected JFrame frame;
@@ -167,56 +168,97 @@ public class Client {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 500, 350);
+		frame.setBounds(100, 100, 500, 400);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
-		JLabel lblNewLabel = new JLabel("Query a word meaning");
-		lblNewLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
-		lblNewLabel.setBounds(27, 6, 449, 19);
-		frame.getContentPane().add(lblNewLabel);
-		lblNewLabel.setHorizontalAlignment(JLabel.CENTER);
-		lblNewLabel.setVerticalAlignment(JLabel.CENTER);
+		JLabel titleLabel = new JLabel("Query a word meaning");
+		titleLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
+		titleLabel.setBounds(27, 6, 449, 19);
+		frame.getContentPane().add(titleLabel);
+		titleLabel.setHorizontalAlignment(JLabel.CENTER);
+		titleLabel.setVerticalAlignment(JLabel.CENTER);
 		
 		wordInputField = new JTextField();
 		wordInputField.setFont(new Font("Lucida Grande", Font.PLAIN, 16));
-		wordInputField.setBounds(27, 56, 286, 36);
+		wordInputField.setBounds(16, 54, 314, 36);
 		frame.getContentPane().add(wordInputField);
 		wordInputField.setColumns(10);
 		
 		JButton submitButton = new JButton("Submit");
-		submitButton.setBounds(340, 60, 117, 33);
+		submitButton.setBounds(359, 57, 117, 33);
 		frame.getContentPane().add(submitButton);
 		
 		textDisplayArea = new JTextArea();
-		textDisplayArea.setBounds(27, 132, 449, 118);
+		textDisplayArea.setBounds(16, 207, 460, 118);
 		frame.getContentPane().add(textDisplayArea);
 		textDisplayArea.setLineWrap(true);
 		textDisplayArea.setWrapStyleWord(true);
 		
 		JButton deleteButton = new JButton("Delete");
-		deleteButton.setBounds(340, 60, 117, 33);
+		deleteButton.setBounds(359, 57, 117, 33);
 		frame.getContentPane().add(deleteButton);
 		deleteButton.setEnabled(false);
 		deleteButton.setVisible(false);
 		
 		JButton queryWord = new JButton("Query Word");
 		queryWord.setForeground(Color.BLACK);
-		queryWord.setBounds(0, 274, 117, 29);
+		queryWord.setBounds(6, 337, 117, 29);
 		frame.getContentPane().add(queryWord);
 		queryWord.setEnabled(false);
 		
 		JButton addWord = new JButton("Add Word");
-		addWord.setBounds(127, 274, 117, 29);
+		addWord.setBounds(124, 337, 117, 29);
 		frame.getContentPane().add(addWord);
 		
 		JButton removeWord = new JButton("Remove Word");
-		removeWord.setBounds(256, 274, 117, 29);
+		removeWord.setBounds(253, 337, 117, 29);
 		frame.getContentPane().add(removeWord);
 		
 		JButton updateWord = new JButton("Update Word");
-		updateWord.setBounds(377, 274, 117, 29);
+		updateWord.setBounds(377, 337, 117, 29);
 		frame.getContentPane().add(updateWord);
+		
+		JButton btnAddMeaning = new JButton("Add Meaning");
+		btnAddMeaning.setBounds(359, 57, 117, 33);
+		frame.getContentPane().add(btnAddMeaning);
+		
+		JButton addSubmitButton = new JButton("Submit");
+		addSubmitButton.setBounds(359, 101, 117, 33);
+		frame.getContentPane().add(addSubmitButton);
+		addSubmitButton.setEnabled(false);
+		addSubmitButton.setVisible(false);
+		
+		JButton addCancelButton = new JButton("Cancel");
+		addCancelButton.setBounds(359, 142, 117, 33);
+		frame.getContentPane().add(addCancelButton);
+		addCancelButton.setEnabled(false);
+		addCancelButton.setVisible(false);
+		
+		JTextArea addMeaningTextArea = new JTextArea();
+		addMeaningTextArea.setBounds(16, 119, 314, 56);
+		frame.getContentPane().add(addMeaningTextArea);
+		addMeaningTextArea.setLineWrap(true);
+		addMeaningTextArea.setWrapStyleWord(true);
+		addMeaningTextArea.setEnabled(false);
+		addMeaningTextArea.setVisible(false);
+		
+		JLabel resultLabel = new JLabel("Result:");
+		resultLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
+		resultLabel.setBounds(16, 187, 61, 16);
+		frame.getContentPane().add(resultLabel);
+		
+		JLabel wordLabel = new JLabel("Word:");
+		wordLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
+		wordLabel.setBounds(16, 37, 61, 16);
+		frame.getContentPane().add(wordLabel);
+		
+		JLabel addMeaningLabel = new JLabel("Add Meaning:");
+		addMeaningLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
+		addMeaningLabel.setBounds(16, 97, 100, 19);
+		frame.getContentPane().add(addMeaningLabel);
+		addMeaningLabel.setEnabled(false);
+		addMeaningLabel.setVisible(false);
 		
 		submitButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -254,7 +296,7 @@ public class Client {
 				submitButton.setVisible(true);
 				deleteButton.setEnabled(false);
 				deleteButton.setVisible(false);
-				lblNewLabel.setText("Query a word meaning");
+				titleLabel.setText("Query a word meaning");
 				queryWord.setEnabled(false);
 //				queryWord.setVisible(false);
 				queryWord.setFocusPainted(false);
@@ -277,7 +319,7 @@ public class Client {
 				submitButton.setVisible(false);
 				deleteButton.setEnabled(true);
 				deleteButton.setVisible(true);
-				lblNewLabel.setText("Delete an existing word");
+				titleLabel.setText("Delete an existing word");
 				queryWord.setEnabled(true);
 				queryWord.setVisible(true);
 				queryWord.setFocusPainted(false);
