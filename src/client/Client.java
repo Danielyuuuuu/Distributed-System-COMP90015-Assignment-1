@@ -1,5 +1,6 @@
 package client;
 
+import java.awt.Color;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -33,7 +34,7 @@ import java.util.Scanner;
 public class Client {
 
 	protected JFrame frame;
-	private JTextField textField;
+	private JTextField wordInputField;
 	
 	private static String hostname;
 	private int port;
@@ -45,6 +46,7 @@ public class Client {
 
 	
 	private JTextArea textArea = null;
+	private JTextArea textDisplayArea;
 	
 	/**
 	 * Launch the application.
@@ -119,7 +121,7 @@ public class Client {
 		System.out.println("Message sent: " + word);
 		
 		
-		textArea.setText("");
+		textDisplayArea.setText("");
 		
 //		// This method blocks until there  is something to read from the
 //		String received;
@@ -135,7 +137,7 @@ public class Client {
 		String received = in.readLine();
 		JSONParser parser = new JSONParser();
 		JSONObject jsonReceived = (JSONObject) parser.parse(received);
-		textArea.append(jsonReceived.get("respond") + "\n");
+		textDisplayArea.append(jsonReceived.get("respond") + "\n");
 		System.out.println(jsonReceived.get("respond"));
 		
 	}
@@ -151,12 +153,12 @@ public class Client {
 		System.out.println("Message sent: " + word);
 		
 		
-		textArea.setText("");
+		textDisplayArea.setText("");
 		
 		String received = in.readLine();
 		JSONParser parser = new JSONParser();
 		JSONObject jsonReceived = (JSONObject) parser.parse(received);
-		textArea.append(jsonReceived.get("respond") + "\n");
+		textDisplayArea.append(jsonReceived.get("respond") + "\n");
 		System.out.println(jsonReceived.get("respond"));
 	}
 
@@ -165,39 +167,61 @@ public class Client {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 450, 300);
+		frame.setBounds(100, 100, 500, 350);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
-		JLabel lblNewLabel = new JLabel("Dictionary");
+		JLabel lblNewLabel = new JLabel("Query a word meaning");
 		lblNewLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
-		lblNewLabel.setBounds(186, 6, 78, 19);
+		lblNewLabel.setBounds(27, 6, 449, 19);
 		frame.getContentPane().add(lblNewLabel);
+		lblNewLabel.setHorizontalAlignment(JLabel.CENTER);
+		lblNewLabel.setVerticalAlignment(JLabel.CENTER);
 		
-		textField = new JTextField();
-		textField.setFont(new Font("Lucida Grande", Font.PLAIN, 16));
-		textField.setBounds(27, 56, 254, 36);
-		frame.getContentPane().add(textField);
-		textField.setColumns(10);
+		wordInputField = new JTextField();
+		wordInputField.setFont(new Font("Lucida Grande", Font.PLAIN, 16));
+		wordInputField.setBounds(27, 56, 286, 36);
+		frame.getContentPane().add(wordInputField);
+		wordInputField.setColumns(10);
 		
 		JButton submitButton = new JButton("Submit");
-		submitButton.setBounds(309, 59, 117, 33);
+		submitButton.setBounds(340, 60, 117, 33);
 		frame.getContentPane().add(submitButton);
 		
-		textArea = new JTextArea();
-		textArea.setBounds(27, 132, 399, 118);
-		frame.getContentPane().add(textArea);
-		textArea.setLineWrap(true);
-		textArea.setWrapStyleWord(true);
+		textDisplayArea = new JTextArea();
+		textDisplayArea.setBounds(27, 132, 449, 118);
+		frame.getContentPane().add(textDisplayArea);
+		textDisplayArea.setLineWrap(true);
+		textDisplayArea.setWrapStyleWord(true);
 		
 		JButton deleteButton = new JButton("Delete");
-		deleteButton.setBounds(309, 91, 117, 33);
+		deleteButton.setBounds(340, 60, 117, 33);
 		frame.getContentPane().add(deleteButton);
+		deleteButton.setEnabled(false);
+		deleteButton.setVisible(false);
+		
+		JButton queryWord = new JButton("Query Word");
+		queryWord.setForeground(Color.BLACK);
+		queryWord.setBounds(0, 274, 117, 29);
+		frame.getContentPane().add(queryWord);
+		queryWord.setEnabled(false);
+		
+		JButton addWord = new JButton("Add Word");
+		addWord.setBounds(127, 274, 117, 29);
+		frame.getContentPane().add(addWord);
+		
+		JButton removeWord = new JButton("Remove Word");
+		removeWord.setBounds(256, 274, 117, 29);
+		frame.getContentPane().add(removeWord);
+		
+		JButton updateWord = new JButton("Update Word");
+		updateWord.setBounds(377, 274, 117, 29);
+		frame.getContentPane().add(updateWord);
 		
 		submitButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String fetchText = textField.getText();
-				textField.setText("");
+				String fetchText = wordInputField.getText();
+				wordInputField.setText("");
 				try {
 					queryWordMeaning(fetchText);
 				} catch (IOException e1) {
@@ -212,14 +236,60 @@ public class Client {
 		
 		deleteButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String fetchText = textField.getText();
-				textField.setText("");
+				String fetchText = wordInputField.getText();
+				wordInputField.setText("");
 				try {
 					deleteWord(fetchText);
 				} catch (IOException | ParseException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
+			}
+		});
+		
+		queryWord.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				textDisplayArea.setText("");
+				submitButton.setEnabled(true);
+				submitButton.setVisible(true);
+				deleteButton.setEnabled(false);
+				deleteButton.setVisible(false);
+				lblNewLabel.setText("Query a word meaning");
+				queryWord.setEnabled(false);
+//				queryWord.setVisible(false);
+				queryWord.setFocusPainted(false);
+				addWord.setEnabled(true);
+				addWord.setVisible(true);
+				addWord.setFocusPainted(false);
+				removeWord.setEnabled(true);
+				removeWord.setVisible(true);
+				removeWord.setFocusPainted(false);
+				updateWord.setEnabled(true);
+				updateWord.setVisible(true);
+				updateWord.setFocusPainted(false);
+			}
+		});
+		
+		removeWord.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				textDisplayArea.setText("");
+				submitButton.setEnabled(false);
+				submitButton.setVisible(false);
+				deleteButton.setEnabled(true);
+				deleteButton.setVisible(true);
+				lblNewLabel.setText("Delete an existing word");
+				queryWord.setEnabled(true);
+				queryWord.setVisible(true);
+				queryWord.setFocusPainted(false);
+				addWord.setEnabled(true);
+				addWord.setVisible(true);
+				addWord.setFocusPainted(false);
+				removeWord.setEnabled(false);
+//				removeWord.setVisible(false);
+				removeWord.setFocusPainted(false);
+				updateWord.setEnabled(true);
+				updateWord.setVisible(true);
+				updateWord.setFocusPainted(false);
 			}
 		});
 	}

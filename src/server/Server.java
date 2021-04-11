@@ -137,7 +137,7 @@ public class Server {
 		return "Word does not exist";
 	}
 	
-	private String UpdateWord(String word ,ArrayList<String> meanings) {
+	private String UpdateWord(String word, ArrayList<String> meanings) {
 		word = word.strip();
 		if (!dict.containsKey(word)) {
 			return "Word not found";
