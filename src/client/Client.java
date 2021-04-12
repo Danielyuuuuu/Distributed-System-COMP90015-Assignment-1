@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JTextField;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -29,6 +30,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 
@@ -48,6 +50,11 @@ public class Client {
 	
 	private JTextArea textArea = null;
 	private JTextArea textDisplayArea;
+	
+	private Boolean isAddingOrUpdatingWord = false;
+	private String wordToAddOrUpdate = "";
+	private ArrayList<String> wordMeaningsList = new ArrayList<>();
+	
 	
 	/**
 	 * Launch the application.
@@ -161,6 +168,17 @@ public class Client {
 		JSONObject jsonReceived = (JSONObject) parser.parse(received);
 		textDisplayArea.append(jsonReceived.get("respond") + "\n");
 		System.out.println(jsonReceived.get("respond"));
+	}
+	
+	private void addWord(String word, ArrayList<String> meanings) throws IOException {
+		JSONObject sendJson = new JSONObject();
+		sendJson.put("operation", "add");
+		sendJson.put("word", word);
+		sendJson.put("meanings", (JSONArray) meanings);
+		
+		out.write(sendJson.toString() + "\n");
+		out.flush();
+		System.out.println("Message sent: " + sendJson.toJSONString());
 	}
 
 	/**
@@ -309,6 +327,42 @@ public class Client {
 			}
 		});
 		
+		addAddMeaningButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String fetchWord = wordInputField.getText().strip().toLowerCase();
+				String fetchMeaning = addMeaningTextArea.getText().strip();
+				if (isAddingOrUpdatingWord) {
+					if (fetchMeaning.equals("")) {
+						textDisplayArea.setText("The meaning is missing");
+					}
+					else {
+						wordMeaningsList.add(fetchMeaning);
+					}
+				}
+				else {
+					if (fetchWord.equals("") || fetchMeaning.equals("")) {
+						textDisplayArea.setText("The word or the meaning is missing");
+					}
+					else {
+						isAddingOrUpdatingWord = true;
+						wordToAddOrUpdate = fetchWord;
+						wordMeaningsList.add(fetchMeaning);
+						addSubmitButton.setEnabled(true);
+						addSubmitButton.setVisible(true);
+						addCancelButton.setEnabled(true);
+						addCancelButton.setVisible(true);
+					}
+				}
+				
+			}
+		});
+		
+		addSubmitButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
+		
 		queryWord.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				textDisplayArea.setText("");
@@ -398,10 +452,10 @@ public class Client {
 				addMeaningLabel.setVisible(true);
 				addMeaningTextArea.setEnabled(true);
 				addMeaningTextArea.setVisible(true);
-				addSubmitButton.setEnabled(true);
-				addSubmitButton.setVisible(true);
-				addCancelButton.setEnabled(true);
-				addCancelButton.setVisible(true);
+				addSubmitButton.setEnabled(false);
+				addSubmitButton.setVisible(false);
+				addCancelButton.setEnabled(false);
+				addCancelButton.setVisible(false);
 				addAddMeaningButton.setEnabled(true);
 				addAddMeaningButton.setVisible(true);
 				updateSubmitButton.setEnabled(false);
@@ -443,10 +497,10 @@ public class Client {
 				addCancelButton.setVisible(false);
 				addAddMeaningButton.setEnabled(false);
 				addAddMeaningButton.setVisible(false);
-				updateSubmitButton.setEnabled(true);
-				updateSubmitButton.setVisible(true);
-				updateCancelButton.setEnabled(true);
-				updateCancelButton.setVisible(true);
+				updateSubmitButton.setEnabled(false);
+				updateSubmitButton.setVisible(false);
+				updateCancelButton.setEnabled(false);
+				updateCancelButton.setVisible(false);
 				updateAddMeaningButton.setEnabled(true);
 				updateAddMeaningButton.setVisible(true);
 				titleLabel.setText("Update an existing word");

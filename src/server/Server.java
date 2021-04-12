@@ -112,7 +112,10 @@ public class Server {
 	}
 	
 	
-	private String AddNewWord(String word, ArrayList<String> meanings) {
+	private static String AddNewWord(String word, JSONArray meanings) {
+
+//		String word = (String) jsonQuery.get("word");
+//		JSONArray meanings = (JSONArray) jsonQuery.get("meanings");
 		word = word.strip();
 		if (dict.containsKey(word)) {
 			return "The word already exist";
@@ -123,7 +126,11 @@ public class Server {
 		else if (meanings.size() == 0) {
 			return "Did not specify the meaning of the word";
 		}
-		dict.put(word, meanings);
+		ArrayList<String> meaningsArrayList = new ArrayList<>();
+		for (Object meaning : meanings) {
+			meaningsArrayList.add(meaning.toString());
+		}
+		dict.put(word, meaningsArrayList);
 		return "Success";
 	}
 	
@@ -286,6 +293,11 @@ public class Server {
             		}
             		else if(clientQueryJson.get("operation").equals("delete")) {
             			deleteWord(clientQueryJson.get("word").toString());
+            		}
+            		else if (clientQueryJson.get("operation").equals("add")) {
+//            			JSONArray meaningsJSONArray = (JSONArray) clientQueryJson.get("meanings");
+//            			clientQueryJson.get("word").toString(), meaningsJSONArray
+            			AddNewWord(clientQueryJson.get("word").toString(), (JSONArray) clientQueryJson.get("meanings"));
             		}
                 	
                 }
