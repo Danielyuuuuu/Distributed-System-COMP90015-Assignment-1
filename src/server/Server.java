@@ -112,49 +112,49 @@ public class Server {
 	}
 	
 	
-	private static String AddNewWord(String word, JSONArray meanings) {
-
-//		String word = (String) jsonQuery.get("word");
-//		JSONArray meanings = (JSONArray) jsonQuery.get("meanings");
-		word = word.strip();
-		if (dict.containsKey(word)) {
-			return "The word already exist";
-		}
-		else if (word.isEmpty()) {
-			return "Did not specify the word";
-		}
-		else if (meanings.size() == 0) {
-			return "Did not specify the meaning of the word";
-		}
-		ArrayList<String> meaningsArrayList = new ArrayList<>();
-		for (Object meaning : meanings) {
-			meaningsArrayList.add(meaning.toString());
-		}
-		dict.put(word, meaningsArrayList);
-		return "Success";
-	}
-	
-	
-	private String RemoveExistingWord(String word) {
-		word = word.strip();
-		if (dict.containsKey(word)) {
-			dict.remove(word);
-			return "Success";
-		}
-		return "Word does not exist";
-	}
-	
-	private String UpdateWord(String word, ArrayList<String> meanings) {
-		word = word.strip();
-		if (!dict.containsKey(word)) {
-			return "Word not found";
-		}
-		else if (meanings.size() == 0) {
-			return "Did not specify the meaning of the word";
-		}
-		dict.replace(word, meanings);
-		return "Success";
-	}
+//	private static String AddNewWord(String word, JSONArray meanings) {
+//
+////		String word = (String) jsonQuery.get("word");
+////		JSONArray meanings = (JSONArray) jsonQuery.get("meanings");
+//		word = word.strip();
+//		if (dict.containsKey(word)) {
+//			return "The word already exist";
+//		}
+//		else if (word.isEmpty()) {
+//			return "Did not specify the word";
+//		}
+//		else if (meanings.size() == 0) {
+//			return "Did not specify the meaning of the word";
+//		}
+//		ArrayList<String> meaningsArrayList = new ArrayList<>();
+//		for (Object meaning : meanings) {
+//			meaningsArrayList.add(meaning.toString());
+//		}
+//		dict.put(word, meaningsArrayList);
+//		return "Success";
+//	}
+//	
+//	
+//	private String RemoveExistingWord(String word) {
+//		word = word.strip();
+//		if (dict.containsKey(word)) {
+//			dict.remove(word);
+//			return "Success";
+//		}
+//		return "Word does not exist";
+//	}
+//	
+//	private String UpdateWord(String word, ArrayList<String> meanings) {
+//		word = word.strip();
+//		if (!dict.containsKey(word)) {
+//			return "Word not found";
+//		}
+//		else if (meanings.size() == 0) {
+//			return "Did not specify the meaning of the word";
+//		}
+//		dict.replace(word, meanings);
+//		return "Success";
+//	}
 	
 
 	/**
@@ -288,17 +288,40 @@ public class Server {
                 	
             		JSONParser parser = new JSONParser();
             		JSONObject clientQueryJson = (JSONObject) parser.parse(clientQuery);
-            		if (clientQueryJson.get("operation").equals("query")) {
-            			GetWordMeaning(clientQueryJson.get("word").toString());
+//            		if (clientQueryJson.get("operation").equals("query")) {
+//            			GetWordMeaning(clientQueryJson.get("word").toString());
+//            		}
+//            		else if(clientQueryJson.get("operation").equals("delete")) {
+//            			deleteWord(clientQueryJson.get("word").toString());
+//            		}
+//            		else if (clientQueryJson.get("operation").equals("add")) {
+////            			JSONArray meaningsJSONArray = (JSONArray) clientQueryJson.get("meanings");
+////            			clientQueryJson.get("word").toString(), meaningsJSONArray
+//            			AddNewWord(clientQueryJson.get("word").toString(), (JSONArray) clientQueryJson.get("meanings"));
+//            		}
+//            		else if (clientQueryJson.get("operation").equals("update")){
+//            			UpdateWord(clientQueryJson.get("word").toString(), (JSONArray) clientQueryJson.get("meanings"));
+//            		}
+            		
+            		switch(clientQueryJson.get("operation").toString()) {
+            			case "query":
+            				System.out.println("In query");
+            				GetWordMeaning(clientQueryJson.get("word").toString());
+            				break;
+            			case "delete":
+            				System.out.println("In delete word");
+            				deleteWord(clientQueryJson.get("word").toString());
+            				break;
+            			case "add":
+            				System.out.println("In add new word");
+            				AddNewWord(clientQueryJson.get("word").toString(), (JSONArray) clientQueryJson.get("meanings"));
+            				break;
+            			case "update":
+            				System.out.println("In update word");
+            				UpdateWord(clientQueryJson.get("word").toString(), (JSONArray) clientQueryJson.get("meanings"));
+            				break;
             		}
-            		else if(clientQueryJson.get("operation").equals("delete")) {
-            			deleteWord(clientQueryJson.get("word").toString());
-            		}
-            		else if (clientQueryJson.get("operation").equals("add")) {
-//            			JSONArray meaningsJSONArray = (JSONArray) clientQueryJson.get("meanings");
-//            			clientQueryJson.get("word").toString(), meaningsJSONArray
-            			AddNewWord(clientQueryJson.get("word").toString(), (JSONArray) clientQueryJson.get("meanings"));
-            		}
+            		
                 	
                 }
             }
@@ -380,6 +403,85 @@ public class Server {
         		out.flush();
         	}
         }
+        
+        
+    	@SuppressWarnings("unchecked")
+		private void AddNewWord(String word, JSONArray meanings) throws IOException {
+    
+//        		String word = (String) jsonQuery.get("word");
+//        		JSONArray meanings = (JSONArray) jsonQuery.get("meanings");
+    		word = word.strip();
+    		if (word.isEmpty()) {
+    			JSONObject responseJson = new JSONObject();
+        		String respondText = "Did not specify the word to add\n";
+        		responseJson.put("respond", respondText);
+        		out.write(responseJson.toString() + "\n");
+        		out.flush();
+    		}
+    		else if (dict.containsKey(word)) {
+    			JSONObject responseJson = new JSONObject();
+        		String respondText = "Word \"" + word + "\" already exist in the dictionary" + "\n";
+        		responseJson.put("respond", respondText);
+        		out.write(responseJson.toString() + "\n");
+        		out.flush();
+    		}
+    		else if (meanings.size() == 0) {
+    			JSONObject responseJson = new JSONObject();
+        		String respondText = "Did not specify the meaning of the word to add\n";
+        		responseJson.put("respond", respondText);
+        		out.write(responseJson.toString() + "\n");
+        		out.flush();
+    		}
+    		ArrayList<String> meaningsArrayList = new ArrayList<>();
+    		for (Object meaning : meanings) {
+    			meaningsArrayList.add(meaning.toString());
+    		}
+    		dict.put(word, meaningsArrayList);
+    		JSONObject responseJson = new JSONObject();
+    		String respondText = "Word \"" + word + "\" has been added successfully" + "\n";
+    		responseJson.put("respond", respondText);
+    		out.write(responseJson.toString() + "\n");
+    		out.flush();
+    	}
+    	
+    	@SuppressWarnings("unchecked")
+		private void UpdateWord(String word, JSONArray meanings) throws IOException {
+    
+//        		String word = (String) jsonQuery.get("word");
+//        		JSONArray meanings = (JSONArray) jsonQuery.get("meanings");
+    		word = word.strip();
+    		if (word.isEmpty()) {
+    			JSONObject responseJson = new JSONObject();
+        		String respondText = "Did not specify the word to update\n";
+        		responseJson.put("respond", respondText);
+        		out.write(responseJson.toString() + "\n");
+        		out.flush();
+    		}
+    		else if (!dict.containsKey(word)) {
+    			JSONObject responseJson = new JSONObject();
+        		String respondText = "Word \"" + word + "\" does not exist in the dictionary" + "\n";
+        		responseJson.put("respond", respondText);
+        		out.write(responseJson.toString() + "\n");
+        		out.flush();
+    		}
+    		else if (meanings.size() == 0) {
+    			JSONObject responseJson = new JSONObject();
+        		String respondText = "Did not specify the meaning of the word to update\n";
+        		responseJson.put("respond", respondText);
+        		out.write(responseJson.toString() + "\n");
+        		out.flush();
+    		}
+    		ArrayList<String> meaningsArrayList = new ArrayList<>();
+    		for (Object meaning : meanings) {
+    			meaningsArrayList.add(meaning.toString());
+    		}
+    		dict.put(word, meaningsArrayList);
+    		JSONObject responseJson = new JSONObject();
+    		String respondText = "Word \"" + word + "\" has been updated successfully" + "\n";
+    		responseJson.put("respond", respondText);
+    		out.write(responseJson.toString() + "\n");
+    		out.flush();
+    	}
         
     }
 
