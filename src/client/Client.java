@@ -409,6 +409,25 @@ public class Client {
 			}
 		});
 		
+		
+		addCancelButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				wordInputField.setEnabled(true);
+				wordInputField.setText("");
+				addMeaningTextArea.setText("");
+				textDisplayArea.setText("Adding word \"" + wordToAddOrUpdate + "\" has been cancelled \n");
+				
+				isAddingOrUpdatingWord = false;
+				wordToAddOrUpdate = "";
+				wordMeaningsList = new ArrayList<>();
+				
+				addSubmitButton.setEnabled(false);
+				addSubmitButton.setVisible(false);
+				addCancelButton.setEnabled(false);
+				addCancelButton.setVisible(false);
+			}
+		});
+		
 		queryWord.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				textDisplayArea.setText("");
