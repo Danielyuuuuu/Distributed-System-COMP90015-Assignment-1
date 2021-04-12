@@ -37,7 +37,7 @@ import java.util.Scanner;
 public class Client {
 
 	protected JFrame frame;
-	private JTextField wordInputField;
+	
 	
 	private static String hostname;
 	private int port;
@@ -48,7 +48,9 @@ public class Client {
 	BufferedWriter out;
 
 	
-	private JTextArea textArea = null;
+//	private JTextArea textArea = null;
+	private JTextField wordInputField;
+	private JTextArea addMeaningTextArea;
 	private JTextArea textDisplayArea;
 	
 	private Boolean isAddingOrUpdatingWord = false;
@@ -104,6 +106,8 @@ public class Client {
 		in = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
 		out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"));
 	}
+	
+	
 	
 	
 	/**
@@ -170,15 +174,28 @@ public class Client {
 		System.out.println(jsonReceived.get("respond"));
 	}
 	
-	private void addWord(String word, ArrayList<String> meanings) throws IOException {
+	private void addWord(String word, ArrayList<String> meanings) throws IOException, ParseException {
 		JSONObject sendJson = new JSONObject();
 		sendJson.put("operation", "add");
 		sendJson.put("word", word);
-		sendJson.put("meanings", (JSONArray) meanings);
+		
+		JSONArray meaningsJSONArray = new JSONArray();
+		for (String meaning : meanings) {
+			meaningsJSONArray.add(meaning);
+		}
+		sendJson.put("meanings", meaningsJSONArray);
 		
 		out.write(sendJson.toString() + "\n");
 		out.flush();
 		System.out.println("Message sent: " + sendJson.toJSONString());
+		
+		textDisplayArea.setText("");
+		
+		String received = in.readLine();
+		JSONParser parser = new JSONParser();
+		JSONObject jsonReceived = (JSONObject) parser.parse(received);
+		textDisplayArea.append(jsonReceived.get("respond") + "\n");
+		System.out.println(jsonReceived.get("respond"));
 	}
 
 	/**
@@ -198,7 +215,7 @@ public class Client {
 		titleLabel.setVerticalAlignment(JLabel.CENTER);
 		
 		wordInputField = new JTextField();
-		wordInputField.setFont(new Font("Lucida Grande", Font.PLAIN, 16));
+		wordInputField.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
 		wordInputField.setBounds(16, 54, 314, 36);
 		frame.getContentPane().add(wordInputField);
 		wordInputField.setColumns(10);
@@ -208,6 +225,7 @@ public class Client {
 		frame.getContentPane().add(submitButton);
 		
 		textDisplayArea = new JTextArea();
+		textDisplayArea.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
 		textDisplayArea.setBounds(16, 207, 460, 118);
 		frame.getContentPane().add(textDisplayArea);
 		textDisplayArea.setLineWrap(true);
@@ -273,7 +291,8 @@ public class Client {
 		updateCancelButton.setEnabled(false);
 		updateCancelButton.setVisible(false);
 		
-		JTextArea addMeaningTextArea = new JTextArea();
+		addMeaningTextArea = new JTextArea();
+		addMeaningTextArea.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
 		addMeaningTextArea.setBounds(16, 119, 314, 56);
 		frame.getContentPane().add(addMeaningTextArea);
 		addMeaningTextArea.setLineWrap(true);
@@ -337,6 +356,14 @@ public class Client {
 					}
 					else {
 						wordMeaningsList.add(fetchMeaning);
+						
+						addMeaningTextArea.setText("");
+						textDisplayArea.setText("Adding word \"" + wordToAddOrUpdate + "\"" + ":\n");
+						int count = 1;
+						for (String meaning : wordMeaningsList) {
+							textDisplayArea.append(count + ". " + meaning + "\n");
+							count++;
+						}
 					}
 				}
 				else {
@@ -351,6 +378,16 @@ public class Client {
 						addSubmitButton.setVisible(true);
 						addCancelButton.setEnabled(true);
 						addCancelButton.setVisible(true);
+						wordInputField.setEnabled(false);
+						
+						addMeaningTextArea.setText("");
+						textDisplayArea.setText("Adding word \"" + wordToAddOrUpdate + "\"" + ":\n");
+						int count = 1;
+						for (String meaning : wordMeaningsList) {
+							textDisplayArea.append(count + ". " + meaning + "\n");
+							count++;
+						}
+						
 					}
 				}
 				
@@ -360,12 +397,23 @@ public class Client {
 		addSubmitButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
+				try {
+					addWord(wordToAddOrUpdate, wordMeaningsList);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (ParseException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
 		
 		queryWord.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				textDisplayArea.setText("");
+				wordInputField.setText("");
+				addMeaningTextArea.setText("");
 				submitButton.setEnabled(true);
 				submitButton.setVisible(true);
 				deleteButton.setEnabled(false);
@@ -399,12 +447,15 @@ public class Client {
 				updateWord.setEnabled(true);
 				updateWord.setVisible(true);
 				updateWord.setFocusPainted(false);
+				wordInputField.setEnabled(true);
 			}
 		});
 		
 		removeWord.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				textDisplayArea.setText("");
+				wordInputField.setText("");
+				addMeaningTextArea.setText("");
 				submitButton.setEnabled(false);
 				submitButton.setVisible(false);
 				deleteButton.setEnabled(true);
@@ -438,12 +489,15 @@ public class Client {
 				updateWord.setEnabled(true);
 				updateWord.setVisible(true);
 				updateWord.setFocusPainted(false);
+				wordInputField.setEnabled(true);
 			}
 		});
 		
 		addWord.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				textDisplayArea.setText("");
+				wordInputField.setText("");
+				addMeaningTextArea.setText("");
 				submitButton.setEnabled(false);
 				submitButton.setVisible(false);
 				deleteButton.setEnabled(false);
@@ -477,16 +531,19 @@ public class Client {
 				updateWord.setEnabled(true);
 				updateWord.setVisible(true);
 				updateWord.setFocusPainted(false);
+				wordInputField.setEnabled(true);
 			}
 		});
 		
 		updateWord.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				textDisplayArea.setText("");
-				submitButton.setEnabled(true);
-				submitButton.setVisible(true);
-				deleteButton.setEnabled(true);
-				deleteButton.setVisible(true);
+				wordInputField.setText("");
+				addMeaningTextArea.setText("");
+				submitButton.setEnabled(false);
+				submitButton.setVisible(false);
+				deleteButton.setEnabled(false);
+				deleteButton.setVisible(false);
 				addMeaningLabel.setEnabled(true);
 				addMeaningLabel.setVisible(true);
 				addMeaningTextArea.setEnabled(true);
@@ -516,6 +573,7 @@ public class Client {
 				updateWord.setEnabled(false);
 //				updateWord.setVisible(false);
 				updateWord.setFocusPainted(false);
+				wordInputField.setEnabled(true);
 			}
 		});
 	}
