@@ -189,6 +189,10 @@ public class Client {
 		out.flush();
 		System.out.println("Message sent: " + sendJson.toJSONString());
 		
+		isAddingOrUpdatingWord = false;
+		wordToAddOrUpdate = "";
+		wordMeaningsList = new ArrayList<>();
+		
 		textDisplayArea.setText("");
 		
 		String received = in.readLine();
@@ -399,6 +403,13 @@ public class Client {
 				
 				try {
 					addWord(wordToAddOrUpdate, wordMeaningsList);
+					wordInputField.setEnabled(true);
+					wordInputField.setText("");
+					addMeaningTextArea.setText("");
+					addSubmitButton.setEnabled(false);
+					addSubmitButton.setVisible(false);
+					addCancelButton.setEnabled(false);
+					addCancelButton.setVisible(false);
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -467,6 +478,10 @@ public class Client {
 				updateWord.setVisible(true);
 				updateWord.setFocusPainted(false);
 				wordInputField.setEnabled(true);
+				
+				isAddingOrUpdatingWord = false;
+				wordToAddOrUpdate = "";
+				wordMeaningsList = new ArrayList<>();
 			}
 		});
 		
@@ -509,6 +524,10 @@ public class Client {
 				updateWord.setVisible(true);
 				updateWord.setFocusPainted(false);
 				wordInputField.setEnabled(true);
+				
+				isAddingOrUpdatingWord = false;
+				wordToAddOrUpdate = "";
+				wordMeaningsList = new ArrayList<>();
 			}
 		});
 		
@@ -551,6 +570,10 @@ public class Client {
 				updateWord.setVisible(true);
 				updateWord.setFocusPainted(false);
 				wordInputField.setEnabled(true);
+				
+				isAddingOrUpdatingWord = false;
+				wordToAddOrUpdate = "";
+				wordMeaningsList = new ArrayList<>();
 			}
 		});
 		
@@ -593,6 +616,10 @@ public class Client {
 //				updateWord.setVisible(false);
 				updateWord.setFocusPainted(false);
 				wordInputField.setEnabled(true);
+				
+				isAddingOrUpdatingWord = false;
+				wordToAddOrUpdate = "";
+				wordMeaningsList = new ArrayList<>();
 			}
 		});
 	}

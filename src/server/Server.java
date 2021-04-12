@@ -432,16 +432,19 @@ public class Server {
         		out.write(responseJson.toString() + "\n");
         		out.flush();
     		}
-    		ArrayList<String> meaningsArrayList = new ArrayList<>();
-    		for (Object meaning : meanings) {
-    			meaningsArrayList.add(meaning.toString());
+    		else {
+    			ArrayList<String> meaningsArrayList = new ArrayList<>();
+	    		for (Object meaning : meanings) {
+	    			meaningsArrayList.add(meaning.toString());
+	    		}
+	    		dict.put(word, meaningsArrayList);
+	    		JSONObject responseJson = new JSONObject();
+	    		String respondText = "Word \"" + word + "\" has been added successfully" + "\n";
+	    		responseJson.put("respond", respondText);
+	    		out.write(responseJson.toString() + "\n");
+	    		out.flush();
     		}
-    		dict.put(word, meaningsArrayList);
-    		JSONObject responseJson = new JSONObject();
-    		String respondText = "Word \"" + word + "\" has been added successfully" + "\n";
-    		responseJson.put("respond", respondText);
-    		out.write(responseJson.toString() + "\n");
-    		out.flush();
+    		
     	}
     	
     	@SuppressWarnings("unchecked")
@@ -471,16 +474,19 @@ public class Server {
         		out.write(responseJson.toString() + "\n");
         		out.flush();
     		}
-    		ArrayList<String> meaningsArrayList = new ArrayList<>();
-    		for (Object meaning : meanings) {
-    			meaningsArrayList.add(meaning.toString());
+    		else {
+    			ArrayList<String> meaningsArrayList = new ArrayList<>();
+	    		for (Object meaning : meanings) {
+	    			meaningsArrayList.add(meaning.toString());
+	    		}
+	    		dict.put(word, meaningsArrayList);
+	    		JSONObject responseJson = new JSONObject();
+	    		String respondText = "Word \"" + word + "\" has been updated successfully" + "\n";
+	    		responseJson.put("respond", respondText);
+	    		out.write(responseJson.toString() + "\n");
+	    		out.flush();
     		}
-    		dict.put(word, meaningsArrayList);
-    		JSONObject responseJson = new JSONObject();
-    		String respondText = "Word \"" + word + "\" has been updated successfully" + "\n";
-    		responseJson.put("respond", respondText);
-    		out.write(responseJson.toString() + "\n");
-    		out.flush();
+    		
     	}
         
     }
