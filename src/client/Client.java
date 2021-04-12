@@ -201,6 +201,34 @@ public class Client {
 		textDisplayArea.append(jsonReceived.get("respond") + "\n");
 		System.out.println(jsonReceived.get("respond"));
 	}
+	
+	private void updateWord(String word, ArrayList<String> meanings) throws IOException, ParseException {
+		JSONObject sendJson = new JSONObject();
+		sendJson.put("operation", "update");
+		sendJson.put("word", word);
+		
+		JSONArray meaningsJSONArray = new JSONArray();
+		for (String meaning : meanings) {
+			meaningsJSONArray.add(meaning);
+		}
+		sendJson.put("meanings", meaningsJSONArray);
+		
+		out.write(sendJson.toString() + "\n");
+		out.flush();
+		System.out.println("Message sent: " + sendJson.toJSONString());
+		
+		isAddingOrUpdatingWord = false;
+		wordToAddOrUpdate = "";
+		wordMeaningsList = new ArrayList<>();
+		
+		textDisplayArea.setText("");
+		
+		String received = in.readLine();
+		JSONParser parser = new JSONParser();
+		JSONObject jsonReceived = (JSONObject) parser.parse(received);
+		textDisplayArea.append(jsonReceived.get("respond") + "\n");
+		System.out.println(jsonReceived.get("respond"));
+	}
 
 	/**
 	 * Initialize the contents of the frame.
@@ -398,6 +426,54 @@ public class Client {
 			}
 		});
 		
+		updateAddMeaningButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String fetchWord = wordInputField.getText().strip().toLowerCase();
+				String fetchMeaning = addMeaningTextArea.getText().strip();
+				if (isAddingOrUpdatingWord) {
+					if (fetchMeaning.equals("")) {
+						textDisplayArea.setText("The meaning is missing");
+					}
+					else {
+						wordMeaningsList.add(fetchMeaning);
+						
+						addMeaningTextArea.setText("");
+						textDisplayArea.setText("Updating word \"" + wordToAddOrUpdate + "\"" + ":\n");
+						int count = 1;
+						for (String meaning : wordMeaningsList) {
+							textDisplayArea.append(count + ". " + meaning + "\n");
+							count++;
+						}
+					}
+				}
+				else {
+					if (fetchWord.equals("") || fetchMeaning.equals("")) {
+						textDisplayArea.setText("The word or the meaning is missing");
+					}
+					else {
+						isAddingOrUpdatingWord = true;
+						wordToAddOrUpdate = fetchWord;
+						wordMeaningsList.add(fetchMeaning);
+						updateSubmitButton.setEnabled(true);
+						updateSubmitButton.setVisible(true);
+						updateCancelButton.setEnabled(true);
+						updateCancelButton.setVisible(true);
+						wordInputField.setEnabled(false);
+						
+						addMeaningTextArea.setText("");
+						textDisplayArea.setText("Updating word \"" + wordToAddOrUpdate + "\"" + ":\n");
+						int count = 1;
+						for (String meaning : wordMeaningsList) {
+							textDisplayArea.append(count + ". " + meaning + "\n");
+							count++;
+						}
+						
+					}
+				}
+				
+			}
+		});
+		
 		addSubmitButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -410,6 +486,28 @@ public class Client {
 					addSubmitButton.setVisible(false);
 					addCancelButton.setEnabled(false);
 					addCancelButton.setVisible(false);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (ParseException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		
+		updateSubmitButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				try {
+					updateWord(wordToAddOrUpdate, wordMeaningsList);
+					wordInputField.setEnabled(true);
+					wordInputField.setText("");
+					addMeaningTextArea.setText("");
+					updateSubmitButton.setEnabled(false);
+					updateSubmitButton.setVisible(false);
+					updateCancelButton.setEnabled(false);
+					updateCancelButton.setVisible(false);
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -436,6 +534,25 @@ public class Client {
 				addSubmitButton.setVisible(false);
 				addCancelButton.setEnabled(false);
 				addCancelButton.setVisible(false);
+			}
+		});
+		
+		
+		updateCancelButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				wordInputField.setEnabled(true);
+				wordInputField.setText("");
+				addMeaningTextArea.setText("");
+				textDisplayArea.setText("Updating word \"" + wordToAddOrUpdate + "\" has been cancelled \n");
+				
+				isAddingOrUpdatingWord = false;
+				wordToAddOrUpdate = "";
+				wordMeaningsList = new ArrayList<>();
+				
+				updateSubmitButton.setEnabled(false);
+				updateSubmitButton.setVisible(false);
+				updateCancelButton.setEnabled(false);
+				updateCancelButton.setVisible(false);
 			}
 		});
 		
