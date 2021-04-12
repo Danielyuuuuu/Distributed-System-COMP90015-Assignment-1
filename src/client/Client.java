@@ -219,9 +219,11 @@ public class Client {
 		updateWord.setBounds(377, 337, 117, 29);
 		frame.getContentPane().add(updateWord);
 		
-		JButton btnAddMeaning = new JButton("Add Meaning");
-		btnAddMeaning.setBounds(359, 57, 117, 33);
-		frame.getContentPane().add(btnAddMeaning);
+		JButton addAddMeaningButton = new JButton("Add Meaning");
+		addAddMeaningButton.setBounds(359, 57, 117, 33);
+		frame.getContentPane().add(addAddMeaningButton);
+		addAddMeaningButton.setEnabled(false);
+		addAddMeaningButton.setVisible(false);
 		
 		JButton addSubmitButton = new JButton("Submit");
 		addSubmitButton.setBounds(359, 101, 117, 33);
@@ -234,6 +236,24 @@ public class Client {
 		frame.getContentPane().add(addCancelButton);
 		addCancelButton.setEnabled(false);
 		addCancelButton.setVisible(false);
+		
+		JButton updateAddMeaningButton = new JButton("Add Meaning");
+		updateAddMeaningButton.setBounds(359, 57, 117, 33);
+		frame.getContentPane().add(updateAddMeaningButton);
+		updateAddMeaningButton.setEnabled(false);
+		updateAddMeaningButton.setVisible(false);
+		
+		JButton updateSubmitButton = new JButton("Submit");
+		updateSubmitButton.setBounds(359, 101, 117, 33);
+		frame.getContentPane().add(updateSubmitButton);
+		updateSubmitButton.setEnabled(false);
+		updateSubmitButton.setVisible(false);
+		
+		JButton updateCancelButton = new JButton("Cancel");
+		updateCancelButton.setBounds(359, 142, 117, 33);
+		frame.getContentPane().add(updateCancelButton);
+		updateCancelButton.setEnabled(false);
+		updateCancelButton.setVisible(false);
 		
 		JTextArea addMeaningTextArea = new JTextArea();
 		addMeaningTextArea.setBounds(16, 119, 314, 56);
@@ -296,6 +316,22 @@ public class Client {
 				submitButton.setVisible(true);
 				deleteButton.setEnabled(false);
 				deleteButton.setVisible(false);
+				addMeaningLabel.setEnabled(false);
+				addMeaningLabel.setVisible(false);
+				addMeaningTextArea.setEnabled(false);
+				addMeaningTextArea.setVisible(false);
+				addSubmitButton.setEnabled(false);
+				addSubmitButton.setVisible(false);
+				addCancelButton.setEnabled(false);
+				addCancelButton.setVisible(false);
+				addAddMeaningButton.setEnabled(false);
+				addAddMeaningButton.setVisible(false);
+				updateSubmitButton.setEnabled(false);
+				updateSubmitButton.setVisible(false);
+				updateCancelButton.setEnabled(false);
+				updateCancelButton.setVisible(false);
+				updateAddMeaningButton.setEnabled(false);
+				updateAddMeaningButton.setVisible(false);
 				titleLabel.setText("Query a word meaning");
 				queryWord.setEnabled(false);
 //				queryWord.setVisible(false);
@@ -319,6 +355,22 @@ public class Client {
 				submitButton.setVisible(false);
 				deleteButton.setEnabled(true);
 				deleteButton.setVisible(true);
+				addMeaningLabel.setEnabled(false);
+				addMeaningLabel.setVisible(false);
+				addMeaningTextArea.setEnabled(false);
+				addMeaningTextArea.setVisible(false);
+				addSubmitButton.setEnabled(false);
+				addSubmitButton.setVisible(false);
+				addCancelButton.setEnabled(false);
+				addCancelButton.setVisible(false);
+				addAddMeaningButton.setEnabled(false);
+				addAddMeaningButton.setVisible(false);
+				updateSubmitButton.setEnabled(false);
+				updateSubmitButton.setVisible(false);
+				updateCancelButton.setEnabled(false);
+				updateCancelButton.setVisible(false);
+				updateAddMeaningButton.setEnabled(false);
+				updateAddMeaningButton.setVisible(false);
 				titleLabel.setText("Delete an existing word");
 				queryWord.setEnabled(true);
 				queryWord.setVisible(true);
@@ -331,6 +383,84 @@ public class Client {
 				removeWord.setFocusPainted(false);
 				updateWord.setEnabled(true);
 				updateWord.setVisible(true);
+				updateWord.setFocusPainted(false);
+			}
+		});
+		
+		addWord.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				textDisplayArea.setText("");
+				submitButton.setEnabled(false);
+				submitButton.setVisible(false);
+				deleteButton.setEnabled(false);
+				deleteButton.setVisible(false);
+				addMeaningLabel.setEnabled(true);
+				addMeaningLabel.setVisible(true);
+				addMeaningTextArea.setEnabled(true);
+				addMeaningTextArea.setVisible(true);
+				addSubmitButton.setEnabled(true);
+				addSubmitButton.setVisible(true);
+				addCancelButton.setEnabled(true);
+				addCancelButton.setVisible(true);
+				addAddMeaningButton.setEnabled(true);
+				addAddMeaningButton.setVisible(true);
+				updateSubmitButton.setEnabled(false);
+				updateSubmitButton.setVisible(false);
+				updateCancelButton.setEnabled(false);
+				updateCancelButton.setVisible(false);
+				updateAddMeaningButton.setEnabled(false);
+				updateAddMeaningButton.setVisible(false);
+				titleLabel.setText("Add a new word");
+				queryWord.setEnabled(true);
+				queryWord.setVisible(true);
+				queryWord.setFocusPainted(false);
+				addWord.setEnabled(false);
+//				addWord.setVisible(false);
+				addWord.setFocusPainted(false);
+				removeWord.setEnabled(true);
+				removeWord.setVisible(true);
+				removeWord.setFocusPainted(false);
+				updateWord.setEnabled(true);
+				updateWord.setVisible(true);
+				updateWord.setFocusPainted(false);
+			}
+		});
+		
+		updateWord.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				textDisplayArea.setText("");
+				submitButton.setEnabled(true);
+				submitButton.setVisible(true);
+				deleteButton.setEnabled(true);
+				deleteButton.setVisible(true);
+				addMeaningLabel.setEnabled(true);
+				addMeaningLabel.setVisible(true);
+				addMeaningTextArea.setEnabled(true);
+				addMeaningTextArea.setVisible(true);
+				addSubmitButton.setEnabled(false);
+				addSubmitButton.setVisible(false);
+				addCancelButton.setEnabled(false);
+				addCancelButton.setVisible(false);
+				addAddMeaningButton.setEnabled(false);
+				addAddMeaningButton.setVisible(false);
+				updateSubmitButton.setEnabled(true);
+				updateSubmitButton.setVisible(true);
+				updateCancelButton.setEnabled(true);
+				updateCancelButton.setVisible(true);
+				updateAddMeaningButton.setEnabled(true);
+				updateAddMeaningButton.setVisible(true);
+				titleLabel.setText("Update an existing word");
+				queryWord.setEnabled(true);
+				queryWord.setVisible(true);
+				queryWord.setFocusPainted(false);
+				addWord.setEnabled(true);
+				addWord.setVisible(true);
+				addWord.setFocusPainted(false);
+				removeWord.setEnabled(true);
+				removeWord.setVisible(true);
+				removeWord.setFocusPainted(false);
+				updateWord.setEnabled(false);
+//				updateWord.setVisible(false);
 				updateWord.setFocusPainted(false);
 			}
 		});
