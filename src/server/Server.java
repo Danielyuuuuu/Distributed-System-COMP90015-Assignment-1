@@ -91,16 +91,14 @@ public class Server {
 	
 	
 	private void ReadDictFile(String filePath) throws FileNotFoundException, IOException, ParseException {        
-        // parsing file "JSONExample.json"
-        Object obj = new JSONParser().parse(new FileReader(filePath));
-          
-        // typecasting obj to JSONObject
-        JSONObject jo = (JSONObject) obj;
+		
+        Object fileObject = new JSONParser().parse(new FileReader(filePath));
+        JSONObject fileJSONObject = (JSONObject) fileObject;
         
-        for(Object word : jo.keySet()) {
+        for(Object word : fileJSONObject.keySet()) {
 
         	ArrayList<String> translationArrayList = new ArrayList<>();
-        	JSONArray array = (JSONArray) jo.get(word);
+        	JSONArray array = (JSONArray) fileJSONObject.get(word);
 
         	for(int i = 0; i < array.size(); i++) {
         		translationArrayList.add((String) array.get(i));
@@ -110,52 +108,7 @@ public class Server {
         
 
 	}
-	
-	
-//	private static String AddNewWord(String word, JSONArray meanings) {
-//
-////		String word = (String) jsonQuery.get("word");
-////		JSONArray meanings = (JSONArray) jsonQuery.get("meanings");
-//		word = word.strip();
-//		if (dict.containsKey(word)) {
-//			return "The word already exist";
-//		}
-//		else if (word.isEmpty()) {
-//			return "Did not specify the word";
-//		}
-//		else if (meanings.size() == 0) {
-//			return "Did not specify the meaning of the word";
-//		}
-//		ArrayList<String> meaningsArrayList = new ArrayList<>();
-//		for (Object meaning : meanings) {
-//			meaningsArrayList.add(meaning.toString());
-//		}
-//		dict.put(word, meaningsArrayList);
-//		return "Success";
-//	}
-//	
-//	
-//	private String RemoveExistingWord(String word) {
-//		word = word.strip();
-//		if (dict.containsKey(word)) {
-//			dict.remove(word);
-//			return "Success";
-//		}
-//		return "Word does not exist";
-//	}
-//	
-//	private String UpdateWord(String word, ArrayList<String> meanings) {
-//		word = word.strip();
-//		if (!dict.containsKey(word)) {
-//			return "Word not found";
-//		}
-//		else if (meanings.size() == 0) {
-//			return "Did not specify the meaning of the word";
-//		}
-//		dict.replace(word, meanings);
-//		return "Success";
-//	}
-	
+
 
 	/**
 	 * Initialize the contents of the frame.
@@ -204,35 +157,28 @@ public class Server {
 			serverStatus.setText("Listening on port: " + port);
 			System.out.println("Server listening on port " + port +  " for a connection");
 			
-	        // running infinite loop for getting
-	        // client request
+	        // Constantly listening on a specific port
 	        while (true) {
 	
-	            // socket object to receive incoming client
-	            // requests
+	        	// Client socket
 	            Socket client;
+	            
 				try {
+					// Connect a new client
 					client = listeningSocket.accept();
 					
 		            counter++;
-		            // Displaying that new client is connected
-		            
-		            // to server
 		            System.out.println("New client connected: " + counter);
-		
-		
-		            // This thread will handle the client
-		            // separately
+		            
+		            // Create a new thread for handling the new client connection
 		            new Thread(new HandleClientConnection(client, counter)).start();
+		            
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-	            
-
 	        }
-		}
-		
+		}		
 	}
 	
 	
@@ -256,52 +202,18 @@ public class Server {
   
         public void run()
         {
-//            PrintWriter out = null;
-//            BufferedReader in = null;
             try {
-                    
-//                  // get the outputstream of client
-//                out = new PrintWriter(
-//                    clientSocket.getOutputStream(), true);
-//  
-//                  // get the inputstream of client
-//                in = new BufferedReader(
-//                    new InputStreamReader(
-//                        clientSocket.getInputStream()));
-  
+
                 //Get the input/output streams for reading/writing data from/to the socket
 				in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), "UTF-8"));
 				out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream(), "UTF-8"));
                 
                 String clientQuery;
                 while ((clientQuery = in.readLine()) != null) {
-//                	if ((line.strip()).equals("search-word-meaning")) {
-//                		line = in.readLine();
-//                        // writing the received message from
-//                        // client
-//                        System.out.println(" Sent from the client " + clientID + ": " + line);
-////    					out.write("Server Ack " + dict.get(line) + "\n");
-////    					out.flush();
-//                        
-//                        GetWordMeaning(line);
-//                	}
                 	
             		JSONParser parser = new JSONParser();
             		JSONObject clientQueryJson = (JSONObject) parser.parse(clientQuery);
-//            		if (clientQueryJson.get("operation").equals("query")) {
-//            			GetWordMeaning(clientQueryJson.get("word").toString());
-//            		}
-//            		else if(clientQueryJson.get("operation").equals("delete")) {
-//            			deleteWord(clientQueryJson.get("word").toString());
-//            		}
-//            		else if (clientQueryJson.get("operation").equals("add")) {
-////            			JSONArray meaningsJSONArray = (JSONArray) clientQueryJson.get("meanings");
-////            			clientQueryJson.get("word").toString(), meaningsJSONArray
-//            			AddNewWord(clientQueryJson.get("word").toString(), (JSONArray) clientQueryJson.get("meanings"));
-//            		}
-//            		else if (clientQueryJson.get("operation").equals("update")){
-//            			UpdateWord(clientQueryJson.get("word").toString(), (JSONArray) clientQueryJson.get("meanings"));
-//            		}
+
             		
             		switch(clientQueryJson.get("operation").toString()) {
             			case "query":
@@ -332,6 +244,7 @@ public class Server {
 				e.printStackTrace();
 			}
             finally {
+            	// Close the input stream and the output stream
                 try {
                     if (out != null) {
                         out.close();
@@ -353,27 +266,19 @@ public class Server {
         	if (dict.containsKey(word)) {
         		String response = "";
         		response = response + "Meaning of \"" + word + "\" is: \n";
-//        		out.write("Meaning of " + word + " is: \n");
         		int count = 1;
         		for (String meaning : dict.get(word)) {
         			response = response + count + ". " + meaning + ".\n";
-//        			out.write(count + ". " + meaning + ".\n");
         			count++;
         		}
-        		System.out.println("Before write end");
-//        		response = response + "end" + "\n";
-//        		out.write(response);
-//        		out.flush();
+
         		
         		JSONObject responseJson = new JSONObject();
         		responseJson.put("respond", response);
         		out.write(responseJson.toString() + "\n");
         		out.flush();
         	}
-        	else {
-//        		out.write("Word \"" + word + "\" does not exist" + "\n" + "end\n");
-//        		out.flush();
-        		
+        	else {   		
         		JSONObject responseJson = new JSONObject();
         		String respondText = "Word \"" + word + "\" does not exist" + "\n";
         		responseJson.put("respond", respondText);
@@ -407,9 +312,7 @@ public class Server {
         
     	@SuppressWarnings("unchecked")
 		private void AddNewWord(String word, JSONArray meanings) throws IOException {
-    
-//        		String word = (String) jsonQuery.get("word");
-//        		JSONArray meanings = (JSONArray) jsonQuery.get("meanings");
+    		
     		word = word.strip();
     		if (word.isEmpty()) {
     			JSONObject responseJson = new JSONObject();
@@ -449,9 +352,7 @@ public class Server {
     	
     	@SuppressWarnings("unchecked")
 		private void UpdateWord(String word, JSONArray meanings) throws IOException {
-    
-//        		String word = (String) jsonQuery.get("word");
-//        		JSONArray meanings = (JSONArray) jsonQuery.get("meanings");
+
     		word = word.strip();
     		if (word.isEmpty()) {
     			JSONObject responseJson = new JSONObject();

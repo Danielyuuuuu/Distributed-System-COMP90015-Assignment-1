@@ -102,13 +102,12 @@ public class Client {
 	 */
 	private void createTCPConnection() throws UnknownHostException, IOException {		
 		socket = new Socket(hostname, port);
-		// Get the input/output streams for reading/writing data from/to the socket
+		
+		// Getting the input and output streams
 		in = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
 		out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"));
 	}
-	
-	
-	
+		
 	
 	/**
 	 * Send word to the dictionary server
@@ -118,12 +117,6 @@ public class Client {
 	 */
 	@SuppressWarnings("unchecked")
 	private void queryWordMeaning(String word) throws IOException, ParseException {		
-		// Send the input string to the server by writing to the socket output stream
-//		out.write("search-word-meaning\n");
-//		out.write(word + "\n");
-//		out.flush();
-//		System.out.println("Message sent: " + word);
-		
 		
 		JSONObject sendJson = new JSONObject();
 		sendJson.put("operation", "query");
@@ -134,17 +127,6 @@ public class Client {
 		
 		
 		textDisplayArea.setText("");
-		
-//		// This method blocks until there  is something to read from the
-//		String received;
-//		while ((received = in.readLine()) != null) {
-//			if((received.strip()).equals("end")) {
-//				System.out.println("Before break");
-//				break;
-//			}
-//			textArea.append(received + "\n");
-//			System.out.println(received);
-//		}
 		
 		String received = in.readLine();
 		JSONParser parser = new JSONParser();
@@ -163,8 +145,7 @@ public class Client {
 		out.write(sendJson.toString() + "\n");
 		out.flush();
 		System.out.println("Message sent: " + word);
-		
-		
+				
 		textDisplayArea.setText("");
 		
 		String received = in.readLine();
@@ -174,6 +155,7 @@ public class Client {
 		System.out.println(jsonReceived.get("respond"));
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void addWord(String word, ArrayList<String> meanings) throws IOException, ParseException {
 		JSONObject sendJson = new JSONObject();
 		sendJson.put("operation", "add");
@@ -202,6 +184,7 @@ public class Client {
 		System.out.println(jsonReceived.get("respond"));
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void updateWord(String word, ArrayList<String> meanings) throws IOException, ParseException {
 		JSONObject sendJson = new JSONObject();
 		sendJson.put("operation", "update");
