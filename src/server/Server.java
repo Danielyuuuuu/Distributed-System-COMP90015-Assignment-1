@@ -145,12 +145,23 @@ public class Server {
  	 */
 	private static class SetPortToListen implements Runnable {
 		//Create a server socket listening on port
-		private final ServerSocket listeningSocket;
-		private final int port;
+		private ServerSocket listeningSocket;
+		private int port;
 		
-		public SetPortToListen(int port) throws IOException {
+		public SetPortToListen(int port) throws ExceptionHandling {
+
 			this.port = port;
-			listeningSocket = new ServerSocket(port);
+			try {
+				this.listeningSocket = new ServerSocket(port);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+//				e.printStackTrace();
+				String exception = "The port " + port + " has been occupied";
+				throw new ExceptionHandling(exception, "Try again using another port");
+				
+			}
+
+			
 		}
 		
 		public void run() {
@@ -176,6 +187,7 @@ public class Server {
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+					
 				}
 	        }
 		}		
