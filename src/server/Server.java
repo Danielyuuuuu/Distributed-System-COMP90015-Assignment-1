@@ -43,6 +43,7 @@ import java.util.Arrays;
 public class Server {
 
 	private JFrame frame;
+	private JTextField portInputField;
 	
 	private int port;
 	
@@ -51,6 +52,8 @@ public class Server {
 	private static Hashtable<String, ArrayList<String>> dict = new Hashtable<>();
 	
 	private static int counter = 0;
+	
+	private static Boolean serverActive = false;
 	
 	/**
 	 * Launch the application.
@@ -78,14 +81,14 @@ public class Server {
 	 * @throws ParseException 
 	 */
 	public Server(String[] args) throws IOException, ExceptionHandling, ParseException {
-		if (args.length != 1) {
-			throw new ExceptionHandling("No server port or dictionary file specified", "format <port> <dictionary-file>");
-		}
-		port = Integer.parseInt(args[0]);
+//		if (args.length != 1) {
+//			throw new ExceptionHandling("No server port or dictionary file specified", "format <port> <dictionary-file>");
+//		}
+//		port = Integer.parseInt(args[0]);
 		initialize();
 		
-		// Start a new thread to listen on a specific port
-		new Thread(new SetPortToListen(port)).start();
+//		// Start a new thread to listen on a specific port
+//		new Thread(new SetPortToListen(port)).start();
 		
 		ReadDictFile("./dict-file.json");
 	}
@@ -116,26 +119,110 @@ public class Server {
 	 * @throws IOException 
 	 */
 	private void initialize() throws IOException {
-		frame = new JFrame();
+//		frame = new JFrame();
+//		
+//		frame.setBounds(100, 100, 450, 300);
+//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//		frame.getContentPane().setLayout(null);
+//		
+//		JLabel lblNewLabel = new JLabel("Server");
+//		lblNewLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
+//		lblNewLabel.setBounds(194, 6, 61, 21);
+//		frame.getContentPane().add(lblNewLabel);
+//		
+//		JLabel lblNewLabel_2 = new JLabel("Server Status:");
+//		lblNewLabel_2.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
+//		lblNewLabel_2.setBounds(32, 92, 118, 21);
+//		frame.getContentPane().add(lblNewLabel_2);
+//		
+//		serverStatus = new JLabel("Inactive");
+//		serverStatus.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
+//		serverStatus.setBounds(173, 92, 271, 21);
+//		frame.getContentPane().add(serverStatus);		
 		
+		frame = new JFrame();
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
-		JLabel lblNewLabel = new JLabel("Server");
-		lblNewLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
-		lblNewLabel.setBounds(194, 6, 61, 21);
-		frame.getContentPane().add(lblNewLabel);
+		JLabel serverLabel = new JLabel("Server");
+		serverLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
+		serverLabel.setBounds(194, 6, 61, 16);
+		frame.getContentPane().add(serverLabel);
 		
-		JLabel lblNewLabel_2 = new JLabel("Server Status:");
-		lblNewLabel_2.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
-		lblNewLabel_2.setBounds(32, 92, 118, 21);
-		frame.getContentPane().add(lblNewLabel_2);
+		portInputField = new JTextField();
+		portInputField.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
+		portInputField.setBounds(153, 150, 130, 26);
+		frame.getContentPane().add(portInputField);
+		portInputField.setColumns(10);
 		
+		JLabel portToListenLabel = new JLabel("Port to listen:");
+		portToListenLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
+		portToListenLabel.setBounds(27, 155, 113, 16);
+		frame.getContentPane().add(portToListenLabel);
+		
+		JButton enterButton = new JButton("Enter");
+		enterButton.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
+		enterButton.setBounds(309, 150, 117, 29);
+		frame.getContentPane().add(enterButton);
+		
+		JLabel serverStatusLabel = new JLabel("Server Status:");
+		serverStatusLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
+		serverStatusLabel.setBounds(50, 81, 113, 16);
+		frame.getContentPane().add(serverStatusLabel);
+		serverStatusLabel.setVisible(false);
+
+		
+//		JLabel lblNewLabel_3 = new JLabel("Inactive");
+//		lblNewLabel_3.setBounds(228, 54, 183, 16);
+//		frame.getContentPane().add(lblNewLabel_3);	
 		serverStatus = new JLabel("Inactive");
 		serverStatus.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
-		serverStatus.setBounds(173, 92, 271, 21);
-		frame.getContentPane().add(serverStatus);		
+		serverStatus.setBounds(175, 79, 271, 21);
+		frame.getContentPane().add(serverStatus);	
+		serverStatus.setVisible(false);
+		
+		JLabel errorMessage = new JLabel("error text");
+		errorMessage.setEnabled(false);
+		errorMessage.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
+		errorMessage.setBounds(26, 83, 400, 16);
+		frame.getContentPane().add(errorMessage);
+		errorMessage.setVisible(false);
+		errorMessage.setHorizontalAlignment(JLabel.CENTER);
+		errorMessage.setVerticalAlignment(JLabel.CENTER);
+		
+		enterButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				port = Integer.parseInt(portInputField.getText());
+				
+				try {
+					Thread listeningThread = new Thread(new SetPortToListen(port));
+					listeningThread.start();
+					
+					if (serverActive) {
+						errorMessage.setVisible(false);
+						portToListenLabel.setVisible(false);
+						portToListenLabel.setEnabled(false);
+						enterButton.setVisible(false);
+						enterButton.setEnabled(false);
+						portInputField.setVisible(false);
+						portInputField.setEnabled(false);
+						serverStatusLabel.setVisible(true);
+						serverStatus.setVisible(true);
+					}
+					else {
+						errorMessage.setText("The port " + port + " is already in use");
+						errorMessage.setVisible(true);
+					}
+				} catch (ExceptionHandling e1) {
+					serverStatus.setText(e1.getMessage());
+				}
+				
+
+				
+					
+			}
+		});	
 		
 	}
 
@@ -160,38 +247,42 @@ public class Server {
 //				String exception = "The port " + port + " has been occupied";
 //				throw new ExceptionHandling(exception, "Try again using another port");
 				System.out.println(e.getMessage());
-				System.exit(1);
+				
 			}
 
 			
 		}
 		
 		public void run() {
-			serverStatus.setText("Listening on port: " + port);
-			System.out.println("Server listening on port " + port +  " for a connection");
+			if (listeningSocket != null && listeningSocket.isBound()) {
+				serverActive = true;
+				serverStatus.setText("Listening on port: " + port);
+				System.out.println("Server listening on port " + port +  " for a connection");
+				
+		        // Constantly listening on a specific port
+		        while (true) {
+		
+		        	// Client socket
+		            Socket client;
+		            
+					try {
+						// Connect a new client
+						client = listeningSocket.accept();
+						
+			            counter++;
+			            System.out.println("New client connected: " + counter);
+			            
+			            // Create a new thread for handling the new client connection
+			            new Thread(new HandleClientConnection(client, counter)).start();
+			            
+					} catch (IOException e) {
+						System.out.println(e.getMessage());
+						System.exit(1);
+						
+					}
+		        }
+			}
 			
-	        // Constantly listening on a specific port
-	        while (true) {
-	
-	        	// Client socket
-	            Socket client;
-	            
-				try {
-					// Connect a new client
-					client = listeningSocket.accept();
-					
-		            counter++;
-		            System.out.println("New client connected: " + counter);
-		            
-		            // Create a new thread for handling the new client connection
-		            new Thread(new HandleClientConnection(client, counter)).start();
-		            
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					
-				}
-	        }
 		}		
 	}
 	
@@ -406,5 +497,4 @@ public class Server {
     	}
         
     }
-
 }
