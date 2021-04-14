@@ -56,6 +56,8 @@ public class Client {
 	private Boolean isAddingOrUpdatingWord = false;
 	private String wordToAddOrUpdate = "";
 	private ArrayList<String> wordMeaningsList = new ArrayList<>();
+	private JTextField severPortTextField;
+	private JTextField hostNameTextField;
 	
 	
 	/**
@@ -89,10 +91,10 @@ public class Client {
 	 * @throws UnknownHostException 
 	 */
 	public Client(String[] args) throws UnknownHostException, IOException {
-		initialize();
+		initializeConnectionGUI();
 		hostname = args[0];
 		port = Integer.parseInt(args[1]);
-		createTCPConnection();
+//		createTCPConnection();
 	}
 	
 	
@@ -101,7 +103,8 @@ public class Client {
 	 * @throws IOException 
 	 * @throws UnknownHostException 
 	 */
-	private void createTCPConnection() throws UnknownHostException, IOException {		
+	private void createTCPConnection(String hostname, String portString) throws UnknownHostException, IOException, NumberFormatException{	
+		int port = Integer.parseInt(portString);
 		socket = new Socket(hostname, port);
 		
 		// Getting the input and output streams
@@ -213,15 +216,94 @@ public class Client {
 		textDisplayArea.append(jsonReceived.get("respond") + "\n");
 		System.out.println(jsonReceived.get("respond"));
 	}
-
-	/**
-	 * Initialize the contents of the frame.
-	 */
-	private void initialize() {
+	
+	private void initializeConnectionGUI() {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 500, 400);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
+		
+		JLabel headerLabel = new JLabel("Connect to dictionary server");
+		headerLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
+		headerLabel.setBounds(114, 6, 280, 25);
+		frame.getContentPane().add(headerLabel);
+		
+		severPortTextField = new JTextField();
+		severPortTextField.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
+		severPortTextField.setBounds(257, 213, 170, 26);
+		frame.getContentPane().add(severPortTextField);
+		severPortTextField.setColumns(10);
+		
+		JLabel serverPortLabel = new JLabel("Dictionary Server Port:");
+		serverPortLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
+		serverPortLabel.setBounds(54, 214, 191, 25);
+		frame.getContentPane().add(serverPortLabel);
+		
+		JButton connectButton = new JButton("Connect");
+		connectButton.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
+		connectButton.setBounds(182, 262, 117, 29);
+		frame.getContentPane().add(connectButton);
+		
+		JLabel errorMessage = new JLabel("Error message");
+		errorMessage.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
+		errorMessage.setBounds(21, 90, 458, 25);
+		frame.getContentPane().add(errorMessage);
+		errorMessage.setHorizontalAlignment(JLabel.CENTER);
+		errorMessage.setVerticalAlignment(JLabel.CENTER);
+		
+		hostNameTextField = new JTextField();
+		hostNameTextField.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
+		hostNameTextField.setColumns(10);
+		hostNameTextField.setBounds(257, 162, 170, 26);
+		frame.getContentPane().add(hostNameTextField);
+		
+		JLabel hostNameLabel = new JLabel("Dictionary Host Name:");
+		hostNameLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
+		hostNameLabel.setBounds(54, 163, 191, 25);
+		frame.getContentPane().add(hostNameLabel);
+		errorMessage.setVisible(false);
+		
+		connectButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Boolean hasError = false;
+				try {
+					createTCPConnection(hostNameTextField.getText().strip(), severPortTextField.getText().strip());
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+//					e1.printStackTrace();
+					hasError = true;
+					errorMessage.setText("The hostname or port number is not correct");
+					errorMessage.setVisible(true);
+					hostNameTextField.setText("");
+					severPortTextField.setText("");
+					
+				} catch (NumberFormatException e1) {
+					hasError = true;
+					errorMessage.setText("The port number is not correct");
+					errorMessage.setVisible(true);
+					hostNameTextField.setText("");
+					severPortTextField.setText("");
+				}
+
+				if (!hasError) {
+					frame.getContentPane().removeAll();
+					frame.repaint();
+					initializeDictGUI();
+				}
+				
+			}
+		});
+		
+	}
+
+	/**
+	 * Initialize the contents of the frame.
+	 */
+	private void initializeDictGUI() {
+//		frame = new JFrame();
+//		frame.setBounds(100, 100, 500, 400);
+//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//		frame.getContentPane().setLayout(null);
 		
 		JLabel titleLabel = new JLabel("Query a word meaning");
 		titleLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
