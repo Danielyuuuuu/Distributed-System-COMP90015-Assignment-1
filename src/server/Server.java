@@ -53,7 +53,7 @@ public class Server {
 	
 	private static int counter = 0;
 	
-	private static Boolean serverActive = false;
+	private SetPortToListen listeningClass;
 	
 	/**
 	 * Launch the application.
@@ -152,23 +152,23 @@ public class Server {
 		
 		portInputField = new JTextField();
 		portInputField.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
-		portInputField.setBounds(153, 150, 130, 26);
+		portInputField.setBounds(153, 120, 136, 26);
 		frame.getContentPane().add(portInputField);
 		portInputField.setColumns(10);
 		
 		JLabel portToListenLabel = new JLabel("Port to listen:");
 		portToListenLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
-		portToListenLabel.setBounds(27, 155, 113, 16);
+		portToListenLabel.setBounds(27, 125, 113, 16);
 		frame.getContentPane().add(portToListenLabel);
 		
 		JButton enterButton = new JButton("Enter");
 		enterButton.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
-		enterButton.setBounds(309, 150, 117, 29);
+		enterButton.setBounds(301, 120, 117, 29);
 		frame.getContentPane().add(enterButton);
 		
 		JLabel serverStatusLabel = new JLabel("Server Status:");
 		serverStatusLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
-		serverStatusLabel.setBounds(50, 81, 113, 16);
+		serverStatusLabel.setBounds(47, 125, 113, 16);
 		frame.getContentPane().add(serverStatusLabel);
 		serverStatusLabel.setVisible(false);
 
@@ -178,14 +178,13 @@ public class Server {
 //		frame.getContentPane().add(lblNewLabel_3);	
 		serverStatus = new JLabel("Inactive");
 		serverStatus.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
-		serverStatus.setBounds(175, 79, 271, 21);
+		serverStatus.setBounds(172, 123, 271, 21);
 		frame.getContentPane().add(serverStatus);	
 		serverStatus.setVisible(false);
 		
 		JLabel errorMessage = new JLabel("error text");
-		errorMessage.setEnabled(false);
 		errorMessage.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
-		errorMessage.setBounds(26, 83, 400, 16);
+		errorMessage.setBounds(27, 60, 400, 26);
 		frame.getContentPane().add(errorMessage);
 		errorMessage.setVisible(false);
 		errorMessage.setHorizontalAlignment(JLabel.CENTER);
@@ -196,29 +195,29 @@ public class Server {
 				port = Integer.parseInt(portInputField.getText());
 				
 				try {
-					Thread listeningThread = new Thread(new SetPortToListen(port));
-					listeningThread.start();
-					
-					if (serverActive) {
-						errorMessage.setVisible(false);
-						portToListenLabel.setVisible(false);
-						portToListenLabel.setEnabled(false);
-						enterButton.setVisible(false);
-						enterButton.setEnabled(false);
-						portInputField.setVisible(false);
-						portInputField.setEnabled(false);
-						serverStatusLabel.setVisible(true);
-						serverStatus.setVisible(true);
-					}
-					else {
-						errorMessage.setText("The port " + port + " is already in use");
-						errorMessage.setVisible(true);
-					}
+//					Thread listeningThread = new Thread(new SetPortToListen(port));
+//					listeningThread.start();
+					listeningClass = new SetPortToListen(port);
 				} catch (ExceptionHandling e1) {
 					serverStatus.setText(e1.getMessage());
 				}
 				
-
+				if (listeningClass.isServerActive()) {
+					errorMessage.setVisible(false);
+					portToListenLabel.setVisible(false);
+					portToListenLabel.setEnabled(false);
+					enterButton.setVisible(false);
+					enterButton.setEnabled(false);
+					portInputField.setVisible(false);
+					portInputField.setEnabled(false);
+					serverStatusLabel.setVisible(true);
+					serverStatus.setVisible(true);
+				}
+				else {
+					errorMessage.setText("Error: The port " + port + " is already in use");
+					errorMessage.setVisible(true);
+					portInputField.setText("");
+				}
 				
 					
 			}
@@ -231,7 +230,7 @@ public class Server {
 	/**
 	 * Set up a Server port that constantly listen for connections
  	 */
-	private static class SetPortToListen implements Runnable {
+	private static class SetPortToListen {
 		//Create a server socket listening on port
 		private ServerSocket listeningSocket;
 		private int port;
@@ -241,6 +240,12 @@ public class Server {
 			this.port = port;
 			try {
 				this.listeningSocket = new ServerSocket(port);
+				if (listeningSocket != null && listeningSocket.isBound()) {
+					System.out.println("in if");
+					new Thread(() -> run()).start();
+				}else {
+					System.out.println("in else");
+				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 //				e.printStackTrace();
@@ -249,39 +254,44 @@ public class Server {
 				System.out.println(e.getMessage());
 				
 			}
-
+		}
+		
+		
+		public Boolean isServerActive() {
+			if (listeningSocket != null && listeningSocket.isBound()) {
+				return true;
+			}
+			return false;
 			
 		}
 		
 		public void run() {
-			if (listeningSocket != null && listeningSocket.isBound()) {
-				serverActive = true;
-				serverStatus.setText("Listening on port: " + port);
-				System.out.println("Server listening on port " + port +  " for a connection");
-				
-		        // Constantly listening on a specific port
-		        while (true) {
-		
-		        	// Client socket
-		            Socket client;
+			serverStatus.setText("Listening on port: " + port);
+			System.out.println("Server listening on port " + port +  " for a connection");
+			
+	        // Constantly listening on a specific port
+	        while (true) {
+	
+	        	// Client socket
+	            Socket client;
+	            
+				try {
+					// Connect a new client
+					client = listeningSocket.accept();
+					
+		            counter++;
+		            System.out.println("New client connected: " + counter);
 		            
-					try {
-						// Connect a new client
-						client = listeningSocket.accept();
-						
-			            counter++;
-			            System.out.println("New client connected: " + counter);
-			            
-			            // Create a new thread for handling the new client connection
-			            new Thread(new HandleClientConnection(client, counter)).start();
-			            
-					} catch (IOException e) {
-						System.out.println(e.getMessage());
-						System.exit(1);
-						
-					}
-		        }
-			}
+		            // Create a new thread for handling the new client connection
+		            new Thread(new HandleClientConnection(client, counter)).start();
+		            
+				} catch (IOException e) {
+					System.out.println(e.getMessage());
+					System.exit(1);
+					
+				}
+	        }
+			
 			
 		}		
 	}
