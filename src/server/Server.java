@@ -63,7 +63,8 @@ public class Server {
 					Server window = new Server(args);
 					window.frame.setVisible(true);
 				} catch (Exception e) {
-					e.printStackTrace();
+					System.out.println(e.getMessage());
+					System.exit(1);
 				}
 			}
 		});
@@ -156,9 +157,10 @@ public class Server {
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 //				e.printStackTrace();
-				String exception = "The port " + port + " has been occupied";
-				throw new ExceptionHandling(exception, "Try again using another port");
-				
+//				String exception = "The port " + port + " has been occupied";
+//				throw new ExceptionHandling(exception, "Try again using another port");
+				System.out.println(e.getMessage());
+				System.exit(1);
 			}
 
 			
@@ -267,7 +269,8 @@ public class Server {
                     }
                 }
                 catch (IOException e) {
-                    e.printStackTrace();
+    				System.out.println(e.getMessage());
+    				System.exit(1);
                 }
             }
         }

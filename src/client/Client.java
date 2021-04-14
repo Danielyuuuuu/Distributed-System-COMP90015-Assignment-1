@@ -75,7 +75,8 @@ public class Client {
 					Client window = new Client(args);
 					window.frame.setVisible(true);
 				} catch (Exception e) {
-					e.printStackTrace();
+					System.out.println(e.getMessage());
+					System.exit(1);
 				}
 			}
 		});
@@ -338,12 +339,9 @@ public class Client {
 				wordInputField.setText("");
 				try {
 					queryWordMeaning(fetchText);
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (ParseException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+				} catch (IOException | ParseException e1) {
+					System.out.println(e1.getMessage());
+					System.exit(1);
 				}
 			}
 		});
@@ -355,8 +353,8 @@ public class Client {
 				try {
 					deleteWord(fetchText);
 				} catch (IOException | ParseException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					System.out.println(e1.getMessage());
+					System.exit(1);
 				}
 			}
 		});
@@ -469,12 +467,9 @@ public class Client {
 					addSubmitButton.setVisible(false);
 					addCancelButton.setEnabled(false);
 					addCancelButton.setVisible(false);
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (ParseException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+				} catch (IOException | ParseException e1) {
+					System.out.println(e1.getMessage());
+					System.exit(1);
 				}
 			}
 		});
@@ -491,12 +486,9 @@ public class Client {
 					updateSubmitButton.setVisible(false);
 					updateCancelButton.setEnabled(false);
 					updateCancelButton.setVisible(false);
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (ParseException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+				} catch (IOException | ParseException e1) {
+					System.out.println(e1.getMessage());
+					System.exit(1);
 				}
 			}
 		});
