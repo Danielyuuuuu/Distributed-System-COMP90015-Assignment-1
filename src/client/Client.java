@@ -102,14 +102,25 @@ public class Client {
 	 * Create TCP connection
 	 * @throws IOException 
 	 * @throws UnknownHostException 
+	 * @throws ParseException 
 	 */
-	private void createTCPConnection(String hostname, String portString) throws UnknownHostException, IOException, NumberFormatException{	
+	private Boolean createTCPConnection(String hostname, String portString) throws UnknownHostException, IOException, NumberFormatException, ParseException{	
 		int port = Integer.parseInt(portString);
 		socket = new Socket(hostname, port);
 		
 		// Getting the input and output streams
 		in = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
 		out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"));
+		
+		String received = in.readLine();
+		JSONParser parser = new JSONParser();
+		JSONObject jsonReceived = (JSONObject) parser.parse(received);
+		
+		System.out.println(jsonReceived.get("connection"));
+		if (jsonReceived.get("connection").equals("connected")) {
+			return true;
+		}
+		return false;
 	}
 		
 	
@@ -266,8 +277,9 @@ public class Client {
 		connectButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Boolean hasError = false;
+				Boolean isConnectedToServer = false;
 				try {
-					createTCPConnection(hostNameTextField.getText().strip(), severPortTextField.getText().strip());
+					isConnectedToServer = createTCPConnection(hostNameTextField.getText().strip(), severPortTextField.getText().strip());
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 //					e1.printStackTrace();
@@ -283,13 +295,26 @@ public class Client {
 					errorMessage.setVisible(true);
 					hostNameTextField.setText("");
 					severPortTextField.setText("");
+				} catch (ParseException e1) {
+					hasError = true;
+					errorMessage.setText("Having trouble on the server end");
+					errorMessage.setVisible(true);
+					hostNameTextField.setText("");
+					severPortTextField.setText("");
 				}
 
-				if (!hasError) {
+				if (!hasError && isConnectedToServer) {
 					frame.getContentPane().removeAll();
 					frame.repaint();
 					initializeDictGUI();
 				}
+				else if (!hasError && !isConnectedToServer) {
+					errorMessage.setText("You have connected to the wrong server");
+					errorMessage.setVisible(true);
+					hostNameTextField.setText("");
+					severPortTextField.setText("");
+				}
+
 				
 			}
 		});

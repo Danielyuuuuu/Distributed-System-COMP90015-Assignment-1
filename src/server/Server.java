@@ -373,6 +373,12 @@ public class Server {
                 //Get the input/output streams for reading/writing data from/to the socket
 				in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), "UTF-8"));
 				out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream(), "UTF-8"));
+				
+				JSONObject responseJson = new JSONObject();
+        		String respondText = "connected";
+        		responseJson.put("connection", respondText);
+        		out.write(responseJson.toString() + "\n");
+        		out.flush();
                 
                 String clientQuery;
                 while ((clientQuery = in.readLine()) != null) {
