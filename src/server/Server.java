@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -54,6 +55,7 @@ public class Server {
 	private static int counter = 0;
 	
 	private SetPortToListen listeningClass;
+	private JTextField dictionaryFilePath;
 	
 	/**
 	 * Launch the application.
@@ -90,27 +92,29 @@ public class Server {
 //		// Start a new thread to listen on a specific port
 //		new Thread(new SetPortToListen(port)).start();
 		
-		ReadDictFile("./dict-file.json");
+//		ReadDictFile("./dictfile.json");
 	}
 	
 	
-	private void ReadDictFile(String filePath) throws FileNotFoundException, IOException, ParseException {        
-		
-        Object fileObject = new JSONParser().parse(new FileReader(filePath));
-        JSONObject fileJSONObject = (JSONObject) fileObject;
-        
-        for(Object word : fileJSONObject.keySet()) {
-
-        	ArrayList<String> translationArrayList = new ArrayList<>();
-        	JSONArray array = (JSONArray) fileJSONObject.get(word);
-
-        	for(int i = 0; i < array.size(); i++) {
-        		translationArrayList.add((String) array.get(i));
-        	}
-        	dict.put(word.toString().toLowerCase(), translationArrayList);
-        }
-        
-
+	private Boolean ReadDictFile(String filePath) throws FileNotFoundException, IOException, ParseException {        
+		File f = new File(filePath);
+		if (f.exists()) {
+			Object fileObject = new JSONParser().parse(new FileReader(filePath));
+	        JSONObject fileJSONObject = (JSONObject) fileObject;
+	        
+	        for(Object word : fileJSONObject.keySet()) {
+	
+	        	ArrayList<String> translationArrayList = new ArrayList<>();
+	        	JSONArray array = (JSONArray) fileJSONObject.get(word);
+	
+	        	for(int i = 0; i < array.size(); i++) {
+	        		translationArrayList.add((String) array.get(i));
+	        	}
+	        	dict.put(word.toString().toLowerCase(), translationArrayList);
+	        }
+	        return true;
+		}        
+		return false;
 	}
 
 
@@ -158,12 +162,12 @@ public class Server {
 		
 		JLabel portToListenLabel = new JLabel("Port to listen:");
 		portToListenLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
-		portToListenLabel.setBounds(27, 125, 113, 16);
+		portToListenLabel.setBounds(27, 123, 113, 21);
 		frame.getContentPane().add(portToListenLabel);
 		
 		JButton enterButton = new JButton("Enter");
 		enterButton.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
-		enterButton.setBounds(301, 120, 117, 29);
+		enterButton.setBounds(172, 223, 117, 29);
 		frame.getContentPane().add(enterButton);
 		
 		JLabel serverStatusLabel = new JLabel("Server Status:");
@@ -190,19 +194,52 @@ public class Server {
 		errorMessage.setHorizontalAlignment(JLabel.CENTER);
 		errorMessage.setVerticalAlignment(JLabel.CENTER);
 		
+		JLabel dictionaryFileLabel = new JLabel("Dictionary file:");
+		dictionaryFileLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
+		dictionaryFileLabel.setBounds(27, 175, 126, 26);
+		frame.getContentPane().add(dictionaryFileLabel);
+		
+		dictionaryFilePath = new JTextField();
+		dictionaryFilePath.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
+		dictionaryFilePath.setColumns(10);
+		dictionaryFilePath.setBounds(153, 175, 274, 26);
+		frame.getContentPane().add(dictionaryFilePath);
+		
 		enterButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				port = Integer.parseInt(portInputField.getText());
+				String dictFilePath;
+				Boolean dictFileFound = false;
+				Boolean portNotANumber = false;
 				
 				try {
+					port = Integer.parseInt(portInputField.getText());
 //					Thread listeningThread = new Thread(new SetPortToListen(port));
 //					listeningThread.start();
-					listeningClass = new SetPortToListen(port);
+					dictFileFound = ReadDictFile(dictionaryFilePath.getText().strip());
+					if (dictFileFound && !portNotANumber) {
+						listeningClass = new SetPortToListen(port);
+					}
 				} catch (ExceptionHandling e1) {
 					serverStatus.setText(e1.getMessage());
+				} catch (FileNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (ParseException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (NumberFormatException e1) {
+					System.out.println("NumberFormatException");
+					portNotANumber = true;
+					errorMessage.setText("Error: The port you entered is not correct");
+					errorMessage.setVisible(true);
+					portInputField.setText("");
+					dictionaryFilePath.setText("");
 				}
 				
-				if (listeningClass.isServerActive()) {
+				if (dictFileFound && !portNotANumber && listeningClass.isServerActive()) {
 					errorMessage.setVisible(false);
 					portToListenLabel.setVisible(false);
 					portToListenLabel.setEnabled(false);
@@ -212,12 +249,26 @@ public class Server {
 					portInputField.setEnabled(false);
 					serverStatusLabel.setVisible(true);
 					serverStatus.setVisible(true);
+					dictionaryFilePath.setEnabled(false);
+					dictionaryFilePath.setVisible(false);
+					dictionaryFileLabel.setEnabled(false);
+					dictionaryFileLabel.setVisible(false);
 				}
-				else {
+				else if (!portNotANumber && !dictFileFound) {
+					errorMessage.setText("Error: Dictionary file not found");
+					errorMessage.setVisible(true);
+					portInputField.setText("");
+					dictionaryFilePath.setText("");
+					
+				}
+				else if (!portNotANumber && listeningClass != null && !listeningClass.isServerActive()){
 					errorMessage.setText("Error: The port " + port + " is already in use");
 					errorMessage.setVisible(true);
 					portInputField.setText("");
+					dictionaryFilePath.setText("");
 				}
+
+
 				
 					
 			}
