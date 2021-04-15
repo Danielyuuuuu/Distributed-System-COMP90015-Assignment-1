@@ -58,12 +58,13 @@ public class Client {
 	private JTextArea addMeaningTextArea;
 	private JTextArea textDisplayArea;
 	
-	private Boolean isAddingOrUpdatingWord = false;
-	private String wordToAddOrUpdate = "";
-	private ArrayList<String> wordMeaningsList = new ArrayList<>();
+//	private Boolean isAddingOrUpdatingWord = false;
+//	private String wordToAddOrUpdate = "";
+//	private ArrayList<String> wordMeaningsList = new ArrayList<>();
 	private JTextField severPortTextField;
 	private JTextField hostNameTextField;
 	
+	private HandleServerConnection handleServerConnection;
 	
 	/**
 	 * Launch the application.
@@ -102,136 +103,6 @@ public class Client {
 //		createTCPConnection();
 	}
 	
-	
-	/**
-	 * Create TCP connection
-	 * @throws IOException 
-	 * @throws UnknownHostException 
-	 * @throws ParseException 
-	 */
-	private Boolean createTCPConnection(String hostname, String portString) throws UnknownHostException, IOException, NumberFormatException, ParseException{	
-		int port = Integer.parseInt(portString);
-		socket = new Socket(hostname, port);
-		
-		// Getting the input and output streams
-		in = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
-		out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"));
-		
-		String received = in.readLine();
-		JSONParser parser = new JSONParser();
-		JSONObject jsonReceived = (JSONObject) parser.parse(received);
-		
-		System.out.println(jsonReceived.get("connection"));
-		if (jsonReceived.get("connection").equals("connected")) {
-			return true;
-		}
-		return false;
-	}
-		
-	
-	/**
-	 * Send word to the dictionary server
-	 * @param word
-	 * @throws IOException
-	 * @throws ParseException 
-	 */
-	@SuppressWarnings("unchecked")
-	private void queryWordMeaning(String word) throws IOException, ParseException {		
-		
-		JSONObject sendJson = new JSONObject();
-		sendJson.put("operation", "query");
-		sendJson.put("word", word);
-		out.write(sendJson.toString() + "\n");
-		out.flush();
-		System.out.println("Message sent: " + word);
-		
-		
-		textDisplayArea.setText("");
-		
-		String received = in.readLine();
-		JSONParser parser = new JSONParser();
-		JSONObject jsonReceived = (JSONObject) parser.parse(received);
-		textDisplayArea.append(jsonReceived.get("respond") + "\n");
-		System.out.println(jsonReceived.get("respond"));
-		
-	}
-	
-	
-	@SuppressWarnings("unchecked")
-	private void deleteWord(String word) throws IOException, ParseException {
-		JSONObject sendJson = new JSONObject();
-		sendJson.put("operation", "delete");
-		sendJson.put("word", word);
-		out.write(sendJson.toString() + "\n");
-		out.flush();
-		System.out.println("Message sent: " + word);
-				
-		textDisplayArea.setText("");
-		
-		String received = in.readLine();
-		JSONParser parser = new JSONParser();
-		JSONObject jsonReceived = (JSONObject) parser.parse(received);
-		textDisplayArea.append(jsonReceived.get("respond") + "\n");
-		System.out.println(jsonReceived.get("respond"));
-	}
-	
-	@SuppressWarnings("unchecked")
-	private void addWord(String word, ArrayList<String> meanings) throws IOException, ParseException {
-		JSONObject sendJson = new JSONObject();
-		sendJson.put("operation", "add");
-		sendJson.put("word", word);
-		
-		JSONArray meaningsJSONArray = new JSONArray();
-		for (String meaning : meanings) {
-			meaningsJSONArray.add(meaning);
-		}
-		sendJson.put("meanings", meaningsJSONArray);
-		
-		out.write(sendJson.toString() + "\n");
-		out.flush();
-		System.out.println("Message sent: " + sendJson.toJSONString());
-		
-		isAddingOrUpdatingWord = false;
-		wordToAddOrUpdate = "";
-		wordMeaningsList = new ArrayList<>();
-		
-		textDisplayArea.setText("");
-		
-		String received = in.readLine();
-		JSONParser parser = new JSONParser();
-		JSONObject jsonReceived = (JSONObject) parser.parse(received);
-		textDisplayArea.append(jsonReceived.get("respond") + "\n");
-		System.out.println(jsonReceived.get("respond"));
-	}
-	
-	@SuppressWarnings("unchecked")
-	private void updateWord(String word, ArrayList<String> meanings) throws IOException, ParseException {
-		JSONObject sendJson = new JSONObject();
-		sendJson.put("operation", "update");
-		sendJson.put("word", word);
-		
-		JSONArray meaningsJSONArray = new JSONArray();
-		for (String meaning : meanings) {
-			meaningsJSONArray.add(meaning);
-		}
-		sendJson.put("meanings", meaningsJSONArray);
-		
-		out.write(sendJson.toString() + "\n");
-		out.flush();
-		System.out.println("Message sent: " + sendJson.toJSONString());
-		
-		isAddingOrUpdatingWord = false;
-		wordToAddOrUpdate = "";
-		wordMeaningsList = new ArrayList<>();
-		
-		textDisplayArea.setText("");
-		
-		String received = in.readLine();
-		JSONParser parser = new JSONParser();
-		JSONObject jsonReceived = (JSONObject) parser.parse(received);
-		textDisplayArea.append(jsonReceived.get("respond") + "\n");
-		System.out.println(jsonReceived.get("respond"));
-	}
 	
 	private void initializeConnectionGUI() {
 		frame = new JFrame();
@@ -284,7 +155,8 @@ public class Client {
 				Boolean hasError = false;
 				Boolean isConnectedToServer = false;
 				try {
-					isConnectedToServer = createTCPConnection(hostNameTextField.getText().strip(), severPortTextField.getText().strip());
+					handleServerConnection = new HandleServerConnection(hostNameTextField.getText().strip(), severPortTextField.getText().strip());
+					isConnectedToServer = handleServerConnection.isConnected();
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 //					e1.printStackTrace();
@@ -450,7 +322,8 @@ public class Client {
 				String fetchText = wordInputField.getText();
 				wordInputField.setText("");
 				try {
-					queryWordMeaning(fetchText);
+					textDisplayArea.setText("");
+					textDisplayArea.append(handleServerConnection.queryWordMeaning(fetchText));
 				} catch (IOException | ParseException e1) {
 					System.out.println(e1.getMessage());
 					System.exit(1);
@@ -463,7 +336,8 @@ public class Client {
 				String fetchText = wordInputField.getText();
 				wordInputField.setText("");
 				try {
-					deleteWord(fetchText);
+					textDisplayArea.setText("");
+					textDisplayArea.append(handleServerConnection.deleteWord(fetchText));
 				} catch (IOException | ParseException e1) {
 					System.out.println(e1.getMessage());
 					System.exit(1);
@@ -475,17 +349,17 @@ public class Client {
 			public void actionPerformed(ActionEvent e) {
 				String fetchWord = wordInputField.getText().strip().toLowerCase();
 				String fetchMeaning = addMeaningTextArea.getText().strip();
-				if (isAddingOrUpdatingWord) {
+				if (handleServerConnection.isAddingOrUpdatingWord()) {
 					if (fetchMeaning.equals("")) {
 						textDisplayArea.setText("The meaning is missing");
 					}
 					else {
-						wordMeaningsList.add(fetchMeaning);
+						handleServerConnection.getWordMeaningsList().add(fetchMeaning);
 						
 						addMeaningTextArea.setText("");
-						textDisplayArea.setText("Adding word \"" + wordToAddOrUpdate + "\"" + ":\n");
+						textDisplayArea.setText("Adding word \"" + handleServerConnection.getWordToAddOrUpdate() + "\"" + ":\n");
 						int count = 1;
-						for (String meaning : wordMeaningsList) {
+						for (String meaning : handleServerConnection.getWordMeaningsList()) {
 							textDisplayArea.append(count + ". " + meaning + "\n");
 							count++;
 						}
@@ -496,9 +370,9 @@ public class Client {
 						textDisplayArea.setText("The word or the meaning is missing");
 					}
 					else {
-						isAddingOrUpdatingWord = true;
-						wordToAddOrUpdate = fetchWord;
-						wordMeaningsList.add(fetchMeaning);
+						handleServerConnection.setIsAddingOrUpdatingWord(true);
+						handleServerConnection.setWordToAddOrUpdate(fetchWord);
+						handleServerConnection.getWordMeaningsList().add(fetchMeaning);
 						addSubmitButton.setEnabled(true);
 						addSubmitButton.setVisible(true);
 						addCancelButton.setEnabled(true);
@@ -506,9 +380,9 @@ public class Client {
 						wordInputField.setEnabled(false);
 						
 						addMeaningTextArea.setText("");
-						textDisplayArea.setText("Adding word \"" + wordToAddOrUpdate + "\"" + ":\n");
+						textDisplayArea.setText("Adding word \"" + handleServerConnection.getWordToAddOrUpdate() + "\"" + ":\n");
 						int count = 1;
-						for (String meaning : wordMeaningsList) {
+						for (String meaning : handleServerConnection.getWordMeaningsList()) {
 							textDisplayArea.append(count + ". " + meaning + "\n");
 							count++;
 						}
@@ -523,17 +397,17 @@ public class Client {
 			public void actionPerformed(ActionEvent e) {
 				String fetchWord = wordInputField.getText().strip().toLowerCase();
 				String fetchMeaning = addMeaningTextArea.getText().strip();
-				if (isAddingOrUpdatingWord) {
+				if (handleServerConnection.isAddingOrUpdatingWord()) {
 					if (fetchMeaning.equals("")) {
 						textDisplayArea.setText("The meaning is missing");
 					}
 					else {
-						wordMeaningsList.add(fetchMeaning);
+						handleServerConnection.getWordMeaningsList().add(fetchMeaning);
 						
 						addMeaningTextArea.setText("");
-						textDisplayArea.setText("Updating word \"" + wordToAddOrUpdate + "\"" + ":\n");
+						textDisplayArea.setText("Updating word \"" + handleServerConnection.getWordToAddOrUpdate() + "\"" + ":\n");
 						int count = 1;
-						for (String meaning : wordMeaningsList) {
+						for (String meaning : handleServerConnection.getWordMeaningsList()) {
 							textDisplayArea.append(count + ". " + meaning + "\n");
 							count++;
 						}
@@ -544,9 +418,9 @@ public class Client {
 						textDisplayArea.setText("The word or the meaning is missing");
 					}
 					else {
-						isAddingOrUpdatingWord = true;
-						wordToAddOrUpdate = fetchWord;
-						wordMeaningsList.add(fetchMeaning);
+						handleServerConnection.setIsAddingOrUpdatingWord(true);
+						handleServerConnection.setWordToAddOrUpdate(fetchWord);
+						handleServerConnection.getWordMeaningsList().add(fetchMeaning);
 						updateSubmitButton.setEnabled(true);
 						updateSubmitButton.setVisible(true);
 						updateCancelButton.setEnabled(true);
@@ -554,9 +428,9 @@ public class Client {
 						wordInputField.setEnabled(false);
 						
 						addMeaningTextArea.setText("");
-						textDisplayArea.setText("Updating word \"" + wordToAddOrUpdate + "\"" + ":\n");
+						textDisplayArea.setText("Updating word \"" + handleServerConnection.getWordToAddOrUpdate() + "\"" + ":\n");
 						int count = 1;
-						for (String meaning : wordMeaningsList) {
+						for (String meaning : handleServerConnection.getWordMeaningsList()) {
 							textDisplayArea.append(count + ". " + meaning + "\n");
 							count++;
 						}
@@ -571,7 +445,8 @@ public class Client {
 			public void actionPerformed(ActionEvent e) {
 				
 				try {
-					addWord(wordToAddOrUpdate, wordMeaningsList);
+					textDisplayArea.setText("");
+					textDisplayArea.append(handleServerConnection.addWord(handleServerConnection.getWordToAddOrUpdate(), handleServerConnection.getWordMeaningsList()));
 					wordInputField.setEnabled(true);
 					wordInputField.setText("");
 					addMeaningTextArea.setText("");
@@ -590,7 +465,8 @@ public class Client {
 			public void actionPerformed(ActionEvent e) {
 				
 				try {
-					updateWord(wordToAddOrUpdate, wordMeaningsList);
+					textDisplayArea.setText("");
+					textDisplayArea.append(handleServerConnection.updateWord(handleServerConnection.getWordToAddOrUpdate(), handleServerConnection.getWordMeaningsList()));
 					wordInputField.setEnabled(true);
 					wordInputField.setText("");
 					addMeaningTextArea.setText("");
@@ -611,11 +487,11 @@ public class Client {
 				wordInputField.setEnabled(true);
 				wordInputField.setText("");
 				addMeaningTextArea.setText("");
-				textDisplayArea.setText("Adding word \"" + wordToAddOrUpdate + "\" has been cancelled \n");
+				textDisplayArea.setText("Adding word \"" + handleServerConnection.getWordToAddOrUpdate() + "\" has been cancelled \n");
 				
-				isAddingOrUpdatingWord = false;
-				wordToAddOrUpdate = "";
-				wordMeaningsList = new ArrayList<>();
+				handleServerConnection.setIsAddingOrUpdatingWord(false);
+				handleServerConnection.setWordToAddOrUpdate("");
+				handleServerConnection.setWordMeaningsList(new ArrayList<>());
 				
 				addSubmitButton.setEnabled(false);
 				addSubmitButton.setVisible(false);
@@ -630,11 +506,14 @@ public class Client {
 				wordInputField.setEnabled(true);
 				wordInputField.setText("");
 				addMeaningTextArea.setText("");
-				textDisplayArea.setText("Updating word \"" + wordToAddOrUpdate + "\" has been cancelled \n");
+				textDisplayArea.setText("Updating word \"" + handleServerConnection.getWordToAddOrUpdate() + "\" has been cancelled \n");
 				
-				isAddingOrUpdatingWord = false;
-				wordToAddOrUpdate = "";
-				wordMeaningsList = new ArrayList<>();
+//				isAddingOrUpdatingWord = false;
+//				wordToAddOrUpdate = "";
+//				wordMeaningsList = new ArrayList<>();
+				handleServerConnection.setIsAddingOrUpdatingWord(false);
+				handleServerConnection.setWordToAddOrUpdate("");
+				handleServerConnection.setWordMeaningsList(new ArrayList<>());
 				
 				updateSubmitButton.setEnabled(false);
 				updateSubmitButton.setVisible(false);
@@ -683,9 +562,12 @@ public class Client {
 				updateWord.setFocusPainted(false);
 				wordInputField.setEnabled(true);
 				
-				isAddingOrUpdatingWord = false;
-				wordToAddOrUpdate = "";
-				wordMeaningsList = new ArrayList<>();
+//				isAddingOrUpdatingWord = false;
+//				wordToAddOrUpdate = "";
+//				wordMeaningsList = new ArrayList<>();
+				handleServerConnection.setIsAddingOrUpdatingWord(false);
+				handleServerConnection.setWordToAddOrUpdate("");
+				handleServerConnection.setWordMeaningsList(new ArrayList<>());
 			}
 		});
 		
@@ -729,9 +611,12 @@ public class Client {
 				updateWord.setFocusPainted(false);
 				wordInputField.setEnabled(true);
 				
-				isAddingOrUpdatingWord = false;
-				wordToAddOrUpdate = "";
-				wordMeaningsList = new ArrayList<>();
+//				isAddingOrUpdatingWord = false;
+//				wordToAddOrUpdate = "";
+//				wordMeaningsList = new ArrayList<>();
+				handleServerConnection.setIsAddingOrUpdatingWord(false);
+				handleServerConnection.setWordToAddOrUpdate("");
+				handleServerConnection.setWordMeaningsList(new ArrayList<>());
 			}
 		});
 		
@@ -775,9 +660,12 @@ public class Client {
 				updateWord.setFocusPainted(false);
 				wordInputField.setEnabled(true);
 				
-				isAddingOrUpdatingWord = false;
-				wordToAddOrUpdate = "";
-				wordMeaningsList = new ArrayList<>();
+//				isAddingOrUpdatingWord = false;
+//				wordToAddOrUpdate = "";
+//				wordMeaningsList = new ArrayList<>();
+				handleServerConnection.setIsAddingOrUpdatingWord(false);
+				handleServerConnection.setWordToAddOrUpdate("");
+				handleServerConnection.setWordMeaningsList(new ArrayList<>());
 			}
 		});
 		
@@ -821,9 +709,12 @@ public class Client {
 				updateWord.setFocusPainted(false);
 				wordInputField.setEnabled(true);
 				
-				isAddingOrUpdatingWord = false;
-				wordToAddOrUpdate = "";
-				wordMeaningsList = new ArrayList<>();
+//				isAddingOrUpdatingWord = false;
+//				wordToAddOrUpdate = "";
+//				wordMeaningsList = new ArrayList<>();
+				handleServerConnection.setIsAddingOrUpdatingWord(false);
+				handleServerConnection.setWordToAddOrUpdate("");
+				handleServerConnection.setWordMeaningsList(new ArrayList<>());
 			}
 		});
 	}
