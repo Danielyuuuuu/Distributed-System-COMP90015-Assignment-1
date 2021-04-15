@@ -19,15 +19,15 @@ import org.json.simple.parser.ParseException;
 public class HandleClientConnection implements Runnable {
 	
     private final Socket clientSocket;
-    private final int clientID;
+//    private final int clientID;
     private BufferedWriter out = null;
     private BufferedReader in = null;
     
     // Constructor
-    public HandleClientConnection(Socket socket, int clientID)
+    public HandleClientConnection(Socket socket)
     {
         this.clientSocket = socket;
-        this.clientID = clientID;
+//        this.clientID = clientID;
     }
 
     public void run()

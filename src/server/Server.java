@@ -55,10 +55,6 @@ public class Server {
 	
 	private static JLabel serverStatus = null;
 	
-//	private static Hashtable<String, ArrayList<String>> dict = new Hashtable<>();
-	
-	private static int counter = 0;
-	
 	private SetPortToListen listeningClass;
 	private JTextField dictionaryFilePath;
 	
@@ -88,66 +84,15 @@ public class Server {
 	 * @throws ParseException 
 	 */
 	public Server(String[] args) throws IOException, ExceptionHandling, ParseException {
-//		if (args.length != 1) {
-//			throw new ExceptionHandling("No server port or dictionary file specified", "format <port> <dictionary-file>");
-//		}
-//		port = Integer.parseInt(args[0]);
 		initialize();
-		
-//		// Start a new thread to listen on a specific port
-//		new Thread(new SetPortToListen(port)).start();
-		
-//		ReadDictFile("./dictfile.json");
 	}
-	
-	
-//	private Boolean ReadDictFile(String filePath) throws FileNotFoundException, IOException, ParseException {        
-//		File f = new File(filePath);
-//		if (f.exists()) {
-//			Object fileObject = new JSONParser().parse(new FileReader(filePath));
-//	        JSONObject fileJSONObject = (JSONObject) fileObject;
-//	        
-//	        for(Object word : fileJSONObject.keySet()) {
-//	
-//	        	ArrayList<String> translationArrayList = new ArrayList<>();
-//	        	JSONArray array = (JSONArray) fileJSONObject.get(word);
-//	
-//	        	for(int i = 0; i < array.size(); i++) {
-//	        		translationArrayList.add((String) array.get(i));
-//	        	}
-//	        	dict.put(word.toString().toLowerCase(), translationArrayList);
-//	        }
-//	        return true;
-//		}        
-//		return false;
-//	}
 
 
 	/**
 	 * Initialize the contents of the frame.
 	 * @throws IOException 
 	 */
-	private void initialize() throws IOException {
-//		frame = new JFrame();
-//		
-//		frame.setBounds(100, 100, 450, 300);
-//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//		frame.getContentPane().setLayout(null);
-//		
-//		JLabel lblNewLabel = new JLabel("Server");
-//		lblNewLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
-//		lblNewLabel.setBounds(194, 6, 61, 21);
-//		frame.getContentPane().add(lblNewLabel);
-//		
-//		JLabel lblNewLabel_2 = new JLabel("Server Status:");
-//		lblNewLabel_2.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
-//		lblNewLabel_2.setBounds(32, 92, 118, 21);
-//		frame.getContentPane().add(lblNewLabel_2);
-//		
-//		serverStatus = new JLabel("Inactive");
-//		serverStatus.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
-//		serverStatus.setBounds(173, 92, 271, 21);
-//		frame.getContentPane().add(serverStatus);		
+	private void initialize() throws IOException {	
 		
 		frame = new JFrame();
 		frame.setBounds(100, 100, 450, 300);
@@ -258,6 +203,7 @@ public class Server {
 					dictionaryFilePath.setVisible(false);
 					dictionaryFileLabel.setEnabled(false);
 					dictionaryFileLabel.setVisible(false);
+					serverStatus.setText("Listening on port: " + port);
 				}
 				else if (!portNotANumber && !dictFileFound) {
 					errorMessage.setText("Error: Dictionary file not found");
@@ -271,81 +217,8 @@ public class Server {
 					errorMessage.setVisible(true);
 					portInputField.setText("");
 					dictionaryFilePath.setText("");
-				}
-
-
-				
-					
+				}					
 			}
-		});	
-		
-	}
-
-	
-	
-	/**
-	 * Set up a Server port that constantly listen for connections
- 	 */
-	private static class SetPortToListen {
-		//Create a server socket listening on port
-		private ServerSocket listeningSocket;
-		private int port;
-		
-		public SetPortToListen(int port) throws ExceptionHandling {
-
-			this.port = port;
-			try {
-				this.listeningSocket = new ServerSocket(port);
-				if (listeningSocket != null && listeningSocket.isBound()) {
-					System.out.println("in if");
-					new Thread(() -> run()).start();
-				}else {
-					System.out.println("in else");
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//				String exception = "The port " + port + " has been occupied";
-//				throw new ExceptionHandling(exception, "Try again using another port");
-				System.out.println(e.getMessage());
-				
-			}
-		}
-		
-		
-		public Boolean isServerActive() {
-			if (listeningSocket != null && listeningSocket.isBound()) {
-				return true;
-			}
-			return false;
-		}
-		
-		public void run() {
-			serverStatus.setText("Listening on port: " + port);
-			System.out.println("Server listening on port " + port +  " for a connection");
-			
-	        // Constantly listening on a specific port
-	        while (true) {
-	
-	        	// Client socket
-	            Socket client;
-	            
-				try {
-					// Connect a new client
-					client = listeningSocket.accept();
-					
-		            counter++;
-		            System.out.println("New client connected: " + counter);
-		            
-		            // Create a new thread for handling the new client connection
-		            new Thread(new HandleClientConnection(client, counter)).start();
-		            
-				} catch (IOException e) {
-					System.out.println(e.getMessage());
-					System.exit(1);
-					
-				}
-	        }			
-		}		
+		});		
 	}
 }
