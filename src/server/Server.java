@@ -55,7 +55,7 @@ public class Server {
 	
 	private static JLabel serverStatus = null;
 	
-	private static Hashtable<String, ArrayList<String>> dict = new Hashtable<>();
+//	private static Hashtable<String, ArrayList<String>> dict = new Hashtable<>();
 	
 	private static int counter = 0;
 	
@@ -101,26 +101,26 @@ public class Server {
 	}
 	
 	
-	private Boolean ReadDictFile(String filePath) throws FileNotFoundException, IOException, ParseException {        
-		File f = new File(filePath);
-		if (f.exists()) {
-			Object fileObject = new JSONParser().parse(new FileReader(filePath));
-	        JSONObject fileJSONObject = (JSONObject) fileObject;
-	        
-	        for(Object word : fileJSONObject.keySet()) {
-	
-	        	ArrayList<String> translationArrayList = new ArrayList<>();
-	        	JSONArray array = (JSONArray) fileJSONObject.get(word);
-	
-	        	for(int i = 0; i < array.size(); i++) {
-	        		translationArrayList.add((String) array.get(i));
-	        	}
-	        	dict.put(word.toString().toLowerCase(), translationArrayList);
-	        }
-	        return true;
-		}        
-		return false;
-	}
+//	private Boolean ReadDictFile(String filePath) throws FileNotFoundException, IOException, ParseException {        
+//		File f = new File(filePath);
+//		if (f.exists()) {
+//			Object fileObject = new JSONParser().parse(new FileReader(filePath));
+//	        JSONObject fileJSONObject = (JSONObject) fileObject;
+//	        
+//	        for(Object word : fileJSONObject.keySet()) {
+//	
+//	        	ArrayList<String> translationArrayList = new ArrayList<>();
+//	        	JSONArray array = (JSONArray) fileJSONObject.get(word);
+//	
+//	        	for(int i = 0; i < array.size(); i++) {
+//	        		translationArrayList.add((String) array.get(i));
+//	        	}
+//	        	dict.put(word.toString().toLowerCase(), translationArrayList);
+//	        }
+//	        return true;
+//		}        
+//		return false;
+//	}
 
 
 	/**
@@ -220,7 +220,7 @@ public class Server {
 					port = Integer.parseInt(portInputField.getText());
 //					Thread listeningThread = new Thread(new SetPortToListen(port));
 //					listeningThread.start();
-					dictFileFound = ReadDictFile(dictionaryFilePath.getText().strip());
+					dictFileFound = DictionaryFile.setUpDictionary(dictionaryFilePath.getText().strip());
 					if (dictFileFound && !portNotANumber) {
 						listeningClass = new SetPortToListen(port);
 					}
@@ -441,11 +441,11 @@ public class Server {
         @SuppressWarnings("unchecked")
 		private void GetWordMeaning(String word) throws IOException {
         	word = word.strip().toLowerCase();
-        	if (dict.containsKey(word)) {
+        	if (DictionaryFile.getDictionary().containsKey(word)) {
         		String response = "";
         		response = response + "Meaning of \"" + word + "\" is: \n";
         		int count = 1;
-        		for (String meaning : dict.get(word)) {
+        		for (String meaning : DictionaryFile.getDictionary().get(word)) {
         			response = response + count + ". " + meaning + ".\n";
         			count++;
         		}
@@ -470,8 +470,8 @@ public class Server {
         @SuppressWarnings("unchecked")
 		private void deleteWord(String word) throws IOException {
         	word = word.strip().toLowerCase();
-        	if (dict.containsKey(word)) {
-        		dict.remove(word);
+        	if (DictionaryFile.getDictionary().containsKey(word)) {
+        		DictionaryFile.getDictionary().remove(word);
         		JSONObject responseJson = new JSONObject();
         		String respondText = "Word \"" + word + "\" deleted successfully" + "\n";
         		responseJson.put("respond", respondText);
@@ -499,7 +499,7 @@ public class Server {
         		out.write(responseJson.toString() + "\n");
         		out.flush();
     		}
-    		else if (dict.containsKey(word)) {
+    		else if (DictionaryFile.getDictionary().containsKey(word)) {
     			JSONObject responseJson = new JSONObject();
         		String respondText = "Word \"" + word + "\" already exist in the dictionary" + "\n";
         		responseJson.put("respond", respondText);
@@ -518,7 +518,7 @@ public class Server {
 	    		for (Object meaning : meanings) {
 	    			meaningsArrayList.add(meaning.toString());
 	    		}
-	    		dict.put(word, meaningsArrayList);
+	    		DictionaryFile.getDictionary().put(word, meaningsArrayList);
 	    		JSONObject responseJson = new JSONObject();
 	    		String respondText = "Word \"" + word + "\" has been added successfully" + "\n";
 	    		responseJson.put("respond", respondText);
@@ -539,7 +539,7 @@ public class Server {
         		out.write(responseJson.toString() + "\n");
         		out.flush();
     		}
-    		else if (!dict.containsKey(word)) {
+    		else if (!DictionaryFile.getDictionary().containsKey(word)) {
     			JSONObject responseJson = new JSONObject();
         		String respondText = "Word \"" + word + "\" does not exist in the dictionary" + "\n";
         		responseJson.put("respond", respondText);
@@ -558,7 +558,7 @@ public class Server {
 	    		for (Object meaning : meanings) {
 	    			meaningsArrayList.add(meaning.toString());
 	    		}
-	    		dict.put(word, meaningsArrayList);
+	    		DictionaryFile.getDictionary().put(word, meaningsArrayList);
 	    		JSONObject responseJson = new JSONObject();
 	    		String respondText = "Word \"" + word + "\" has been updated successfully" + "\n";
 	    		responseJson.put("respond", respondText);
