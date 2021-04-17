@@ -3,8 +3,8 @@ package server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-
 import client.ExceptionHandling;
+
 
 /**
  * Set up a Server port that constantly listen for connections
@@ -26,12 +26,7 @@ public class SetPortToListen {
 				System.out.println("in else");
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//			String exception = "The port " + port + " has been occupied";
-//			throw new ExceptionHandling(exception, "Try again using another port");
-			System.out.println(e.getMessage());
-			
+			System.out.println(e.getMessage());	
 		}
 	}
 	
@@ -44,7 +39,6 @@ public class SetPortToListen {
 	}
 	
 	public void run() {
-//		serverStatus.setText("Listening on port: " + port);
 		System.out.println("Server listening on port " + port +  " for a connection");
 		
         // Constantly listening on a specific port

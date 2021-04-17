@@ -19,7 +19,6 @@ import org.json.simple.parser.ParseException;
 public class HandleClientConnection implements Runnable {
 	
     private final Socket clientSocket;
-//    private final int clientID;
     private BufferedWriter out = null;
     private BufferedReader in = null;
     
@@ -27,10 +26,10 @@ public class HandleClientConnection implements Runnable {
     public HandleClientConnection(Socket socket)
     {
         this.clientSocket = socket;
-//        this.clientID = clientID;
     }
 
-    public void run()
+    @SuppressWarnings("unchecked")
+	public void run()
     {
         try {
 
