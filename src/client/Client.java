@@ -7,62 +7,23 @@ package client;
 
 import java.awt.Color;
 import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.JTextField;
-
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-
 import javax.swing.JButton;
 import javax.swing.JTextArea;
-
-import java.io.*;
-import java.net.Socket;
 import java.net.UnknownHostException;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 
 public class Client {
 
 	protected JFrame frame;
-	
-	
-	private static String hostname;
-	private int port;
-	
-	Socket socket = null;
-	// Get the input/output streams for reading/writing data from/to the socket
-	BufferedReader in;
-	BufferedWriter out;
-
-	
-//	private JTextArea textArea = null;
-	private JTextField wordInputField;
-	private JTextArea addMeaningTextArea;
-	private JTextArea textDisplayArea;
-	
-//	private Boolean isAddingOrUpdatingWord = false;
-//	private String wordToAddOrUpdate = "";
-//	private ArrayList<String> wordMeaningsList = new ArrayList<>();
-	private JTextField severPortTextField;
-	private JTextField hostNameTextField;
 	
 	private HandleServerConnection handleServerConnection;
 	
@@ -98,9 +59,7 @@ public class Client {
 	 */
 	public Client(String[] args) throws UnknownHostException, IOException {
 		initializeConnectionGUI();
-		hostname = args[0];
-		port = Integer.parseInt(args[1]);
-//		createTCPConnection();
+		Integer.parseInt(args[1]);
 	}
 	
 	
@@ -115,7 +74,7 @@ public class Client {
 		headerLabel.setBounds(114, 6, 280, 25);
 		frame.getContentPane().add(headerLabel);
 		
-		severPortTextField = new JTextField();
+		JTextField severPortTextField = new JTextField();
 		severPortTextField.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
 		severPortTextField.setBounds(257, 213, 170, 26);
 		frame.getContentPane().add(severPortTextField);
@@ -138,7 +97,7 @@ public class Client {
 		errorMessage.setHorizontalAlignment(JLabel.CENTER);
 		errorMessage.setVerticalAlignment(JLabel.CENTER);
 		
-		hostNameTextField = new JTextField();
+		JTextField hostNameTextField = new JTextField();
 		hostNameTextField.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
 		hostNameTextField.setColumns(10);
 		hostNameTextField.setBounds(257, 162, 170, 26);
@@ -158,8 +117,6 @@ public class Client {
 					handleServerConnection = new HandleServerConnection(hostNameTextField.getText().strip(), severPortTextField.getText().strip());
 					isConnectedToServer = handleServerConnection.isConnected();
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-//					e1.printStackTrace();
 					hasError = true;
 					errorMessage.setText("The hostname or port number is not correct");
 					errorMessage.setVisible(true);
@@ -202,10 +159,6 @@ public class Client {
 	 * Initialize the contents of the frame.
 	 */
 	private void initializeDictGUI() {
-//		frame = new JFrame();
-//		frame.setBounds(100, 100, 500, 400);
-//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//		frame.getContentPane().setLayout(null);
 		
 		JLabel titleLabel = new JLabel("Query a word meaning");
 		titleLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
@@ -214,7 +167,7 @@ public class Client {
 		titleLabel.setHorizontalAlignment(JLabel.CENTER);
 		titleLabel.setVerticalAlignment(JLabel.CENTER);
 		
-		wordInputField = new JTextField();
+		JTextField wordInputField = new JTextField();
 		wordInputField.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
 		wordInputField.setBounds(16, 54, 314, 36);
 		frame.getContentPane().add(wordInputField);
@@ -224,7 +177,7 @@ public class Client {
 		submitButton.setBounds(359, 57, 117, 33);
 		frame.getContentPane().add(submitButton);
 		
-		textDisplayArea = new JTextArea();
+		JTextArea textDisplayArea = new JTextArea();
 		textDisplayArea.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
 		textDisplayArea.setBounds(16, 207, 460, 118);
 		frame.getContentPane().add(textDisplayArea);
@@ -291,7 +244,7 @@ public class Client {
 		updateCancelButton.setEnabled(false);
 		updateCancelButton.setVisible(false);
 		
-		addMeaningTextArea = new JTextArea();
+		JTextArea addMeaningTextArea = new JTextArea();
 		addMeaningTextArea.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
 		addMeaningTextArea.setBounds(16, 119, 314, 56);
 		frame.getContentPane().add(addMeaningTextArea);
@@ -507,10 +460,7 @@ public class Client {
 				wordInputField.setText("");
 				addMeaningTextArea.setText("");
 				textDisplayArea.setText("Updating word \"" + handleServerConnection.getWordToAddOrUpdate() + "\" has been cancelled \n");
-				
-//				isAddingOrUpdatingWord = false;
-//				wordToAddOrUpdate = "";
-//				wordMeaningsList = new ArrayList<>();
+
 				handleServerConnection.setIsAddingOrUpdatingWord(false);
 				handleServerConnection.setWordToAddOrUpdate("");
 				handleServerConnection.setWordMeaningsList(new ArrayList<>());
@@ -561,10 +511,6 @@ public class Client {
 				updateWord.setVisible(true);
 				updateWord.setFocusPainted(false);
 				wordInputField.setEnabled(true);
-				
-//				isAddingOrUpdatingWord = false;
-//				wordToAddOrUpdate = "";
-//				wordMeaningsList = new ArrayList<>();
 				handleServerConnection.setIsAddingOrUpdatingWord(false);
 				handleServerConnection.setWordToAddOrUpdate("");
 				handleServerConnection.setWordMeaningsList(new ArrayList<>());
@@ -610,10 +556,6 @@ public class Client {
 				updateWord.setVisible(true);
 				updateWord.setFocusPainted(false);
 				wordInputField.setEnabled(true);
-				
-//				isAddingOrUpdatingWord = false;
-//				wordToAddOrUpdate = "";
-//				wordMeaningsList = new ArrayList<>();
 				handleServerConnection.setIsAddingOrUpdatingWord(false);
 				handleServerConnection.setWordToAddOrUpdate("");
 				handleServerConnection.setWordMeaningsList(new ArrayList<>());
@@ -659,10 +601,6 @@ public class Client {
 				updateWord.setVisible(true);
 				updateWord.setFocusPainted(false);
 				wordInputField.setEnabled(true);
-				
-//				isAddingOrUpdatingWord = false;
-//				wordToAddOrUpdate = "";
-//				wordMeaningsList = new ArrayList<>();
 				handleServerConnection.setIsAddingOrUpdatingWord(false);
 				handleServerConnection.setWordToAddOrUpdate("");
 				handleServerConnection.setWordMeaningsList(new ArrayList<>());
@@ -708,10 +646,6 @@ public class Client {
 //				updateWord.setVisible(false);
 				updateWord.setFocusPainted(false);
 				wordInputField.setEnabled(true);
-				
-//				isAddingOrUpdatingWord = false;
-//				wordToAddOrUpdate = "";
-//				wordMeaningsList = new ArrayList<>();
 				handleServerConnection.setIsAddingOrUpdatingWord(false);
 				handleServerConnection.setWordToAddOrUpdate("");
 				handleServerConnection.setWordMeaningsList(new ArrayList<>());

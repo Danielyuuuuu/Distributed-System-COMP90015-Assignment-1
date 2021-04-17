@@ -1,3 +1,8 @@
+/*
+ * The program is written by Yifei Yu
+ * Student ID: 945753
+ */
+
 package client;
 
 import java.io.BufferedReader;
@@ -16,6 +21,7 @@ import org.json.simple.parser.ParseException;
 
 public class HandleServerConnection {
 	private Socket socket = null;
+	
 	// Get the input/output streams for reading/writing data from/to the socket
 	private BufferedReader in;
 	private BufferedWriter out;
@@ -68,13 +74,9 @@ public class HandleServerConnection {
 		out.flush();
 		System.out.println("Message sent: " + word);
 		
-		
-//		textDisplayArea.setText("");
-		
 		String received = in.readLine();
 		JSONParser parser = new JSONParser();
 		JSONObject jsonReceived = (JSONObject) parser.parse(received);
-//		textDisplayArea.append(jsonReceived.get("respond") + "\n");
 		System.out.println(jsonReceived.get("respond"));
 		return jsonReceived.get("respond").toString();
 		
@@ -89,13 +91,10 @@ public class HandleServerConnection {
 		out.write(sendJson.toString() + "\n");
 		out.flush();
 		System.out.println("Message sent: " + word);
-				
-//		textDisplayArea.setText("");
 		
 		String received = in.readLine();
 		JSONParser parser = new JSONParser();
 		JSONObject jsonReceived = (JSONObject) parser.parse(received);
-//		textDisplayArea.append(jsonReceived.get("respond") + "\n");
 		System.out.println(jsonReceived.get("respond"));
 		
 		return jsonReceived.get("respond").toString();
@@ -120,13 +119,10 @@ public class HandleServerConnection {
 		isAddingOrUpdatingWord = false;
 		wordToAddOrUpdate = "";
 		wordMeaningsList = new ArrayList<>();
-//		
-//		textDisplayArea.setText("");
 		
 		String received = in.readLine();
 		JSONParser parser = new JSONParser();
 		JSONObject jsonReceived = (JSONObject) parser.parse(received);
-//		textDisplayArea.append(jsonReceived.get("respond") + "\n");
 		System.out.println(jsonReceived.get("respond"));
 		
 		return jsonReceived.get("respond").toString();
@@ -152,12 +148,9 @@ public class HandleServerConnection {
 		wordToAddOrUpdate = "";
 		wordMeaningsList = new ArrayList<>();
 		
-//		textDisplayArea.setText("");
-		
 		String received = in.readLine();
 		JSONParser parser = new JSONParser();
 		JSONObject jsonReceived = (JSONObject) parser.parse(received);
-//		textDisplayArea.append(jsonReceived.get("respond") + "\n");
 		System.out.println(jsonReceived.get("respond"));
 		
 		return jsonReceived.get("respond").toString();
