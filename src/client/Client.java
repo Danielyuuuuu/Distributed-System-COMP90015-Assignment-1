@@ -41,7 +41,7 @@ public class Client {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Client window = new Client(args);
+					Client window = new Client();
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					System.out.println(e.getMessage());
@@ -57,9 +57,8 @@ public class Client {
 	 * @throws IOException 
 	 * @throws UnknownHostException 
 	 */
-	public Client(String[] args) throws UnknownHostException, IOException {
+	public Client() {
 		initializeConnectionGUI();
-		Integer.parseInt(args[1]);
 	}
 	
 	
