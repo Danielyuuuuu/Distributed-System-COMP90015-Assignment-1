@@ -36,7 +36,7 @@ public class Server {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Server window = new Server(args);
+					Server window = new Server();
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					System.out.println(e.getMessage());
@@ -53,7 +53,7 @@ public class Server {
 	 * @throws ExceptionHandling 
 	 * @throws ParseException 
 	 */
-	public Server(String[] args) throws IOException, ExceptionHandling, ParseException {
+	private Server() throws IOException {
 		initialize();
 	}
 
