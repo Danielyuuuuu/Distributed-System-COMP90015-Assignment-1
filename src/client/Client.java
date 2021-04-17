@@ -52,12 +52,8 @@ public class Client {
 		
 	}
 
-	/**
-	 * Create the application.
-	 * @throws IOException 
-	 * @throws UnknownHostException 
-	 */
-	public Client() {
+
+	private Client() {
 		initializeConnectionGUI();
 	}
 	
