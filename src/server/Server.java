@@ -6,7 +6,6 @@
 package server;
 
 import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import java.awt.Font;
@@ -15,9 +14,6 @@ import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import javax.swing.JTextField;
-
-import client.ExceptionHandling;
-
 import javax.swing.JButton;
 import org.json.simple.parser.ParseException;
 
@@ -132,8 +128,6 @@ public class Server {
 					if (dictFileFound && !portNotANumber) {
 						listeningClass = new SetPortToListen(port);
 					}
-				} catch (ExceptionHandling e1) {
-					serverStatus.setText(e1.getMessage());
 				} catch (FileNotFoundException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();

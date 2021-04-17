@@ -31,12 +31,8 @@ public class Client {
 	 * Launch the application.
 	 * @throws ExceptionHandling 
 	 */
-	public static void main(String[] args) throws ExceptionHandling {
+	public static void main(String[] args) {
 		System.out.print("Hello from client\n");
-		
-		if (args.length != 2) {
-			throw new ExceptionHandling("No server address or port number specified", "format <server-address> <server-port>");
-		}
 		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {

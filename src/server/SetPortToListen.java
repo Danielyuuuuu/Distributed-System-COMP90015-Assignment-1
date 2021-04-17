@@ -8,7 +8,6 @@ package server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import client.ExceptionHandling;
 
 
 /**
@@ -19,7 +18,7 @@ public class SetPortToListen {
 	private ServerSocket listeningSocket;
 	private int port;
 	
-	public SetPortToListen(int port) throws ExceptionHandling {
+	public SetPortToListen(int port){
 
 		this.port = port;
 		try {
