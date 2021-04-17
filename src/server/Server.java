@@ -12,51 +12,21 @@ import javax.swing.JLabel;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.SocketException;
-
 import javax.swing.JTextField;
 
 import client.ExceptionHandling;
-//import server.MultiThreadServer.ClientHandler;
 
 import javax.swing.JButton;
-import javax.swing.JTextArea;
-
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-
-import java.io.FileReader;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 
 public class Server {
 
 	private JFrame frame;
-	private JTextField portInputField;
-	
-	private int port;
-	
-	private static JLabel serverStatus = null;
 	
 	private SetPortToListen listeningClass;
-	private JTextField dictionaryFilePath;
 	
 	/**
 	 * Launch the application.
@@ -104,7 +74,7 @@ public class Server {
 		serverLabel.setBounds(194, 6, 61, 16);
 		frame.getContentPane().add(serverLabel);
 		
-		portInputField = new JTextField();
+		JTextField portInputField = new JTextField();
 		portInputField.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
 		portInputField.setBounds(153, 120, 136, 26);
 		frame.getContentPane().add(portInputField);
@@ -126,11 +96,7 @@ public class Server {
 		frame.getContentPane().add(serverStatusLabel);
 		serverStatusLabel.setVisible(false);
 
-		
-//		JLabel lblNewLabel_3 = new JLabel("Inactive");
-//		lblNewLabel_3.setBounds(228, 54, 183, 16);
-//		frame.getContentPane().add(lblNewLabel_3);	
-		serverStatus = new JLabel("Inactive");
+		JLabel serverStatus = new JLabel("Inactive");
 		serverStatus.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
 		serverStatus.setBounds(172, 123, 271, 21);
 		frame.getContentPane().add(serverStatus);	
@@ -149,7 +115,7 @@ public class Server {
 		dictionaryFileLabel.setBounds(27, 175, 126, 26);
 		frame.getContentPane().add(dictionaryFileLabel);
 		
-		dictionaryFilePath = new JTextField();
+		JTextField dictionaryFilePath = new JTextField();
 		dictionaryFilePath.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
 		dictionaryFilePath.setColumns(10);
 		dictionaryFilePath.setBounds(153, 175, 274, 26);
@@ -157,14 +123,11 @@ public class Server {
 		
 		enterButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String dictFilePath;
 				Boolean dictFileFound = false;
 				Boolean portNotANumber = false;
-				
+				int port = 0;
 				try {
 					port = Integer.parseInt(portInputField.getText());
-//					Thread listeningThread = new Thread(new SetPortToListen(port));
-//					listeningThread.start();
 					dictFileFound = DictionaryFile.setUpDictionary(dictionaryFilePath.getText().strip());
 					if (dictFileFound && !portNotANumber) {
 						listeningClass = new SetPortToListen(port);
