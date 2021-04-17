@@ -58,7 +58,7 @@ public class HandleClientConnection implements Runnable {
         		switch(clientQueryJson.get("operation").toString()) {
         			case "query":
         				System.out.println("In query");
-        				GetWordMeaning(clientQueryJson.get("word").toString());
+        				getWordMeaning(clientQueryJson.get("word").toString());
         				break;
         			case "delete":
         				System.out.println("In delete word");
@@ -66,11 +66,11 @@ public class HandleClientConnection implements Runnable {
         				break;
         			case "add":
         				System.out.println("In add new word");
-        				AddNewWord(clientQueryJson.get("word").toString(), (JSONArray) clientQueryJson.get("meanings"));
+        				addNewWord(clientQueryJson.get("word").toString(), (JSONArray) clientQueryJson.get("meanings"));
         				break;
         			case "update":
         				System.out.println("In update word");
-        				UpdateWord(clientQueryJson.get("word").toString(), (JSONArray) clientQueryJson.get("meanings"));
+        				updateWord(clientQueryJson.get("word").toString(), (JSONArray) clientQueryJson.get("meanings"));
         				break;
         		}
         		
@@ -102,7 +102,7 @@ public class HandleClientConnection implements Runnable {
     }
     
     @SuppressWarnings("unchecked")
-	private void GetWordMeaning(String word) throws IOException {
+	private void getWordMeaning(String word) throws IOException {
     	word = word.strip().toLowerCase();
     	if (DictionaryFile.getDictionary().containsKey(word)) {
     		String response = "";
@@ -152,7 +152,7 @@ public class HandleClientConnection implements Runnable {
     
     
 	@SuppressWarnings("unchecked")
-	private void AddNewWord(String word, JSONArray meanings) throws IOException {
+	private void addNewWord(String word, JSONArray meanings) throws IOException {
 		
 		word = word.strip();
 		if (word.isEmpty()) {
@@ -192,7 +192,7 @@ public class HandleClientConnection implements Runnable {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void UpdateWord(String word, JSONArray meanings) throws IOException {
+	private void updateWord(String word, JSONArray meanings) throws IOException {
 
 		word = word.strip();
 		if (word.isEmpty()) {
