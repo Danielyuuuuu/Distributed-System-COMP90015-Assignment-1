@@ -12,6 +12,10 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+
+/*
+ * To read and store the dictionary file in a HashTable
+ */
 public class DictionaryFile {
 	
 	private static DictionaryFile dictionaryFile = null;

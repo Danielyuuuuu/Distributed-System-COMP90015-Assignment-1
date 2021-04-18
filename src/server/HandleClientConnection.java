@@ -33,6 +33,9 @@ public class HandleClientConnection implements Runnable {
         this.clientSocket = socket;
     }
 
+    /*
+     * To handle the client connection and requests
+     */
     @SuppressWarnings("unchecked")
 	public void run()
     {
@@ -57,19 +60,15 @@ public class HandleClientConnection implements Runnable {
         		
         		switch(clientQueryJson.get("operation").toString()) {
         			case "query":
-        				System.out.println("In query");
         				getWordMeaning(clientQueryJson.get("word").toString());
         				break;
         			case "delete":
-        				System.out.println("In delete word");
         				deleteWord(clientQueryJson.get("word").toString());
         				break;
         			case "add":
-        				System.out.println("In add new word");
         				addNewWord(clientQueryJson.get("word").toString(), (JSONArray) clientQueryJson.get("meanings"));
         				break;
         			case "update":
-        				System.out.println("In update word");
         				updateWord(clientQueryJson.get("word").toString(), (JSONArray) clientQueryJson.get("meanings"));
         				break;
         		}
@@ -101,6 +100,9 @@ public class HandleClientConnection implements Runnable {
         }
     }
     
+    /*
+     * Handle query word request
+     */
     @SuppressWarnings("unchecked")
 	private void getWordMeaning(String word) throws IOException {
     	word = word.strip().toLowerCase();
@@ -129,7 +131,9 @@ public class HandleClientConnection implements Runnable {
     	
     }
     
-    
+    /*
+     * Handle delete word request
+     */
     @SuppressWarnings("unchecked")
 	private void deleteWord(String word) throws IOException {
     	word = word.strip().toLowerCase();
@@ -151,6 +155,9 @@ public class HandleClientConnection implements Runnable {
     }
     
     
+    /*
+     * Handle add new word request
+     */
 	@SuppressWarnings("unchecked")
 	private void addNewWord(String word, JSONArray meanings) throws IOException {
 		
@@ -191,6 +198,10 @@ public class HandleClientConnection implements Runnable {
 		
 	}
 	
+	
+	/*
+	 * Handle update word request
+	 */
 	@SuppressWarnings("unchecked")
 	private void updateWord(String word, JSONArray meanings) throws IOException {
 

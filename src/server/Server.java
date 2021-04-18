@@ -18,6 +18,9 @@ import javax.swing.JButton;
 import org.json.simple.parser.ParseException;
 
 
+/*
+ * The server program
+ */
 public class Server {
 
 	private JFrame frame;

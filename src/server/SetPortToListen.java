@@ -12,22 +12,17 @@ import java.net.Socket;
 
 /**
  * Set up a Server port that constantly listen for connections
-	 */
+ */
 public class SetPortToListen {
 	//Create a server socket listening on port
 	private ServerSocket listeningSocket;
-	private int port;
 	
 	public SetPortToListen(int port){
-
-		this.port = port;
 		try {
 			this.listeningSocket = new ServerSocket(port);
 			if (listeningSocket != null && listeningSocket.isBound()) {
-				System.out.println("in if");
 				new Thread(() -> run()).start();
 			}else {
-				System.out.println("in else");
 			}
 		} catch (IOException e) {
 			System.out.println(e.getMessage());	
@@ -42,10 +37,12 @@ public class SetPortToListen {
 		return false;
 	}
 	
+	
+	/*
+	 * Constantly listening on a specific port
+	 */
 	public void run() {
-		System.out.println("Server listening on port " + port +  " for a connection");
 		
-        // Constantly listening on a specific port
         while (true) {
 
         	// Client socket

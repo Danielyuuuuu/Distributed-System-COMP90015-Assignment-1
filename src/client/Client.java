@@ -16,11 +16,13 @@ import javax.swing.JTextField;
 import org.json.simple.parser.ParseException;
 import javax.swing.JButton;
 import javax.swing.JTextArea;
-import java.net.UnknownHostException;
 import java.io.IOException;
 import java.util.ArrayList;
 
 
+/**
+ * The client dictionary program 
+ */
 public class Client {
 
 	protected JFrame frame;
@@ -32,7 +34,6 @@ public class Client {
 	 * @throws ExceptionHandling 
 	 */
 	public static void main(String[] args) {
-		System.out.print("Hello from client\n");
 		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -54,6 +55,9 @@ public class Client {
 	}
 	
 	
+	/*
+	 * Initialize the GUI that asks for server IP address and server port
+	 */
 	private void initializeConnectionGUI() {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 500, 400);

@@ -19,6 +19,10 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+
+/*
+ * To handle server connection
+ */
 public class HandleServerConnection {
 	private Socket socket = null;
 	
@@ -31,10 +35,14 @@ public class HandleServerConnection {
 	private String wordToAddOrUpdate = "";
 	private ArrayList<String> wordMeaningsList = new ArrayList<>();
 	
+	
 	public HandleServerConnection(String hostname, String portString) throws NumberFormatException, UnknownHostException, IOException, ParseException {
 		isConnected = createTCPConnection(hostname, portString);
 	}
 	
+	/*
+	 * To create a TCP connection with the server
+	 */
 	private Boolean createTCPConnection(String hostname, String portString) throws UnknownHostException, IOException, NumberFormatException, ParseException{	
 		int port = Integer.parseInt(portString);
 		socket = new Socket(hostname, port);
@@ -47,7 +55,6 @@ public class HandleServerConnection {
 		JSONParser parser = new JSONParser();
 		JSONObject jsonReceived = (JSONObject) parser.parse(received);
 		
-		System.out.println(jsonReceived.get("connection"));
 		if (jsonReceived.get("connection").equals("connected")) {
 			return true;
 		}
@@ -59,7 +66,7 @@ public class HandleServerConnection {
 	}
 	
 	/**
-	 * Send word to the dictionary server
+	 * Make a query word request
 	 * @param word
 	 * @throws IOException
 	 * @throws ParseException 
@@ -72,17 +79,17 @@ public class HandleServerConnection {
 		sendJson.put("word", word);
 		out.write(sendJson.toString() + "\n");
 		out.flush();
-		System.out.println("Message sent: " + word);
 		
 		String received = in.readLine();
 		JSONParser parser = new JSONParser();
 		JSONObject jsonReceived = (JSONObject) parser.parse(received);
-		System.out.println(jsonReceived.get("respond"));
 		return jsonReceived.get("respond").toString();
 		
 	}
 	
-	
+	/*
+	 * Make a delete word request
+	 */
 	@SuppressWarnings("unchecked")
 	public String deleteWord(String word) throws IOException, ParseException {
 		JSONObject sendJson = new JSONObject();
@@ -90,16 +97,17 @@ public class HandleServerConnection {
 		sendJson.put("word", word);
 		out.write(sendJson.toString() + "\n");
 		out.flush();
-		System.out.println("Message sent: " + word);
 		
 		String received = in.readLine();
 		JSONParser parser = new JSONParser();
 		JSONObject jsonReceived = (JSONObject) parser.parse(received);
-		System.out.println(jsonReceived.get("respond"));
 		
 		return jsonReceived.get("respond").toString();
 	}
 	
+	/*
+	 * Make a update word request
+	 */
 	@SuppressWarnings("unchecked")
 	public String addWord(String word, ArrayList<String> meanings) throws IOException, ParseException {
 		JSONObject sendJson = new JSONObject();
@@ -114,7 +122,6 @@ public class HandleServerConnection {
 		
 		out.write(sendJson.toString() + "\n");
 		out.flush();
-		System.out.println("Message sent: " + sendJson.toJSONString());
 		
 		isAddingOrUpdatingWord = false;
 		wordToAddOrUpdate = "";
@@ -123,11 +130,13 @@ public class HandleServerConnection {
 		String received = in.readLine();
 		JSONParser parser = new JSONParser();
 		JSONObject jsonReceived = (JSONObject) parser.parse(received);
-		System.out.println(jsonReceived.get("respond"));
 		
 		return jsonReceived.get("respond").toString();
 	}
 	
+	/*
+	 * Make a update word request
+	 */
 	@SuppressWarnings("unchecked")
 	public String updateWord(String word, ArrayList<String> meanings) throws IOException, ParseException {
 		JSONObject sendJson = new JSONObject();
@@ -142,7 +151,6 @@ public class HandleServerConnection {
 		
 		out.write(sendJson.toString() + "\n");
 		out.flush();
-		System.out.println("Message sent: " + sendJson.toJSONString());
 		
 		isAddingOrUpdatingWord = false;
 		wordToAddOrUpdate = "";
@@ -151,7 +159,6 @@ public class HandleServerConnection {
 		String received = in.readLine();
 		JSONParser parser = new JSONParser();
 		JSONObject jsonReceived = (JSONObject) parser.parse(received);
-		System.out.println(jsonReceived.get("respond"));
 		
 		return jsonReceived.get("respond").toString();
 	}
