@@ -18,6 +18,7 @@ import javax.swing.JButton;
 import javax.swing.JTextArea;
 import java.io.IOException;
 import java.util.ArrayList;
+import javax.swing.JScrollPane;
 
 
 /**
@@ -154,7 +155,7 @@ public class Client {
 	 * Initialize the contents of the frame.
 	 */
 	private void initializeDictGUI() {
-		
+
 		JLabel titleLabel = new JLabel("Query a word meaning");
 		titleLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
 		titleLabel.setBounds(27, 6, 449, 19);
@@ -172,10 +173,13 @@ public class Client {
 		submitButton.setBounds(359, 57, 117, 33);
 		frame.getContentPane().add(submitButton);
 		
+		JScrollPane textDisplayAreaScrollPane = new JScrollPane();
+		textDisplayAreaScrollPane.setBounds(16, 207, 460, 118);
+		frame.getContentPane().add(textDisplayAreaScrollPane);
+		
 		JTextArea textDisplayArea = new JTextArea();
+		textDisplayAreaScrollPane.setViewportView(textDisplayArea);
 		textDisplayArea.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
-		textDisplayArea.setBounds(16, 207, 460, 118);
-		frame.getContentPane().add(textDisplayArea);
 		textDisplayArea.setLineWrap(true);
 		textDisplayArea.setWrapStyleWord(true);
 		
@@ -239,10 +243,15 @@ public class Client {
 		updateCancelButton.setEnabled(false);
 		updateCancelButton.setVisible(false);
 		
+		JScrollPane addMeaningTextAreaScrollPane = new JScrollPane();
+		addMeaningTextAreaScrollPane.setBounds(16, 119, 314, 56);
+		frame.getContentPane().add(addMeaningTextAreaScrollPane);
+		addMeaningTextAreaScrollPane.setEnabled(false);
+		addMeaningTextAreaScrollPane.setVisible(false);
+		
 		JTextArea addMeaningTextArea = new JTextArea();
+		addMeaningTextAreaScrollPane.setViewportView(addMeaningTextArea);
 		addMeaningTextArea.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
-		addMeaningTextArea.setBounds(16, 119, 314, 56);
-		frame.getContentPane().add(addMeaningTextArea);
 		addMeaningTextArea.setLineWrap(true);
 		addMeaningTextArea.setWrapStyleWord(true);
 		addMeaningTextArea.setEnabled(false);
@@ -509,6 +518,8 @@ public class Client {
 				handleServerConnection.setIsAddingOrUpdatingWord(false);
 				handleServerConnection.setWordToAddOrUpdate("");
 				handleServerConnection.setWordMeaningsList(new ArrayList<>());
+				addMeaningTextAreaScrollPane.setEnabled(false);
+				addMeaningTextAreaScrollPane.setVisible(false);
 			}
 		});
 		
@@ -554,6 +565,8 @@ public class Client {
 				handleServerConnection.setIsAddingOrUpdatingWord(false);
 				handleServerConnection.setWordToAddOrUpdate("");
 				handleServerConnection.setWordMeaningsList(new ArrayList<>());
+				addMeaningTextAreaScrollPane.setEnabled(false);
+				addMeaningTextAreaScrollPane.setVisible(false);
 			}
 		});
 		
@@ -599,6 +612,8 @@ public class Client {
 				handleServerConnection.setIsAddingOrUpdatingWord(false);
 				handleServerConnection.setWordToAddOrUpdate("");
 				handleServerConnection.setWordMeaningsList(new ArrayList<>());
+				addMeaningTextAreaScrollPane.setEnabled(true);
+				addMeaningTextAreaScrollPane.setVisible(true);
 			}
 		});
 		
@@ -644,6 +659,8 @@ public class Client {
 				handleServerConnection.setIsAddingOrUpdatingWord(false);
 				handleServerConnection.setWordToAddOrUpdate("");
 				handleServerConnection.setWordMeaningsList(new ArrayList<>());
+				addMeaningTextAreaScrollPane.setEnabled(true);
+				addMeaningTextAreaScrollPane.setVisible(true);
 			}
 		});
 	}
