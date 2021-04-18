@@ -16,6 +16,8 @@ import java.io.IOException;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import org.json.simple.parser.ParseException;
+import javax.swing.JTextArea;
+import javax.swing.JScrollPane;
 
 
 /*
@@ -26,6 +28,8 @@ public class Server {
 	private JFrame frame;
 	
 	private SetPortToListen listeningClass;
+	
+	private static JTextArea requestTextArea;
 	
 	/**
 	 * Launch the application.
@@ -53,7 +57,7 @@ public class Server {
 	 * @throws ParseException 
 	 */
 	private Server() throws IOException {
-		initialize();
+		initializeGUI();
 	}
 
 
@@ -61,7 +65,7 @@ public class Server {
 	 * Initialize the contents of the frame.
 	 * @throws IOException 
 	 */
-	private void initialize() throws IOException {	
+	private void initializeGUI() throws IOException {	
 		
 		frame = new JFrame();
 		frame.setBounds(100, 100, 450, 300);
@@ -91,13 +95,13 @@ public class Server {
 		
 		JLabel serverStatusLabel = new JLabel("Server Status:");
 		serverStatusLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
-		serverStatusLabel.setBounds(47, 125, 113, 16);
+		serverStatusLabel.setBounds(27, 36, 113, 16);
 		frame.getContentPane().add(serverStatusLabel);
 		serverStatusLabel.setVisible(false);
 
 		JLabel serverStatus = new JLabel("Inactive");
 		serverStatus.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
-		serverStatus.setBounds(172, 123, 271, 21);
+		serverStatus.setBounds(156, 34, 271, 21);
 		frame.getContentPane().add(serverStatus);	
 		serverStatus.setVisible(false);
 		
@@ -119,6 +123,20 @@ public class Server {
 		dictionaryFilePath.setColumns(10);
 		dictionaryFilePath.setBounds(153, 175, 274, 26);
 		frame.getContentPane().add(dictionaryFilePath);
+		
+		JScrollPane requestTextAreaScrollPane = new JScrollPane();
+		requestTextAreaScrollPane.setBounds(6, 64, 438, 202);
+		frame.getContentPane().add(requestTextAreaScrollPane);
+		requestTextAreaScrollPane.setVisible(false);
+		requestTextAreaScrollPane.setEnabled(false);
+		
+		requestTextArea = new JTextArea();
+		requestTextArea.setFont(new Font("Lucida Grande", Font.PLAIN, 16));
+		requestTextAreaScrollPane.setViewportView(requestTextArea);
+		requestTextArea.setVisible(false);
+		requestTextArea.setEnabled(false);
+		requestTextArea.setLineWrap(true);
+		requestTextArea.setWrapStyleWord(true);
 		
 		enterButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -164,6 +182,10 @@ public class Server {
 					dictionaryFileLabel.setEnabled(false);
 					dictionaryFileLabel.setVisible(false);
 					serverStatus.setText("Listening on port: " + port);
+					requestTextAreaScrollPane.setVisible(true);
+					requestTextAreaScrollPane.setEnabled(true);
+					requestTextArea.setVisible(true);
+					requestTextArea.setEnabled(true);
 				}
 				else if (!portNotANumber && !dictFileFound) {
 					errorMessage.setText("Error: Dictionary file not found");
@@ -180,5 +202,9 @@ public class Server {
 				}					
 			}
 		});		
+	}
+	
+	public static void updateRequestTextArea(String textToDisplay) {
+		requestTextArea.append(textToDisplay + "\n");
 	}
 }

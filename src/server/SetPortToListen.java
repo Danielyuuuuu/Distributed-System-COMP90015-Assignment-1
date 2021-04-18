@@ -17,6 +17,8 @@ public class SetPortToListen {
 	//Create a server socket listening on port
 	private ServerSocket listeningSocket;
 	
+	private int counter = 0;
+	
 	public SetPortToListen(int port){
 		try {
 			this.listeningSocket = new ServerSocket(port);
@@ -53,9 +55,11 @@ public class SetPortToListen {
 				client = listeningSocket.accept();
 				
 	            System.out.println("New client connected: ");
+	            counter++;
+	            Server.updateRequestTextArea("New client connected: " + counter);
 	            
 	            // Create a new thread for handling the new client connection
-	            new Thread(new HandleClientConnection(client)).start();
+	            new Thread(new HandleClientConnection(client, counter)).start();
 	            
 			} catch (IOException e) {
 				System.out.println(e.getMessage());

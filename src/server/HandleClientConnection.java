@@ -26,11 +26,13 @@ public class HandleClientConnection implements Runnable {
     private final Socket clientSocket;
     private BufferedWriter out = null;
     private BufferedReader in = null;
+    private int clientID;
     
     // Constructor
-    public HandleClientConnection(Socket socket)
+    public HandleClientConnection(Socket socket, int clientID)
     {
         this.clientSocket = socket;
+        this.clientID = clientID;
     }
 
     /*
@@ -60,15 +62,19 @@ public class HandleClientConnection implements Runnable {
         		
         		switch(clientQueryJson.get("operation").toString()) {
         			case "query":
+        				Server.updateRequestTextArea("Client " + clientID + " sends query word request");
         				getWordMeaning(clientQueryJson.get("word").toString());
         				break;
         			case "delete":
+        				Server.updateRequestTextArea("Client " + clientID + " sends delete word request");
         				deleteWord(clientQueryJson.get("word").toString());
         				break;
         			case "add":
+        				Server.updateRequestTextArea("Client " + clientID + " sends add new word request");
         				addNewWord(clientQueryJson.get("word").toString(), (JSONArray) clientQueryJson.get("meanings"));
         				break;
         			case "update":
+        				Server.updateRequestTextArea("Client " + clientID + " sends update existing word request");
         				updateWord(clientQueryJson.get("word").toString(), (JSONArray) clientQueryJson.get("meanings"));
         				break;
         		}
